@@ -42,14 +42,12 @@ def main() :
             already_exists = False
     description = input('     what will the script do ? >>> ')
     date = datetime.now().strftime("%Y-%m-%d")
-    with open(path.parent / '.python-version') as file :
-        version = file.read()
 
     # Print informations
     print(f'     name : {name}')
     print(f'     description : {description}')
     print(f'     date : {date}')
-    if not module_path.exists() :
+    if not script_path.exists() :
         os.mkdir(script_path)
 
     # Function to copy file
