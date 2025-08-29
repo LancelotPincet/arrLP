@@ -12,6 +12,7 @@ Adds a dependency to arrLP
 
 # %% Libraries
 from devlp import path
+import toml
 import subprocess
 
 
@@ -26,7 +27,20 @@ def main() :
         ok = input(f'     "{name}" will be added to arrLP ? [y]/n >>> ')
         if ok.lower() in ["", "y", "yes", "true"] :
             todefine = False
-    subprocess.run(["uv", "add", name], cwd=path.parent / 'libsLP/arrLP', check=True, stdout=subprocess.PIPE)
+    
+    proj_path = path.parent / 'libsLP/arrLP/pyproject.toml'
+    with open(proj_path, "r") as file :
+        data = toml.load(file)
+    dependencies = data['project']['dependencies'] + [name]
+    data['project']['dependencies'] = sorted(dependencies)
+    with open(proj_path, "w") as file :
+        toml.dump(data, file)
+    print('     Pyproject file filled')
+
+    subprocess.run(["uv", "venv", "--clear"], cwd=path.parent / 'libsLP/arrLP', check=True, stdout=subprocess.PIPE)
+    print('     venv cleared')
+    subprocess.run(["uv", "sync", "--all-packages"], cwd=path.parent / 'libsLP/arrLP', check=True, stdout=subprocess.PIPE)
+    print('     venv synched')
 
     # End
     print('add_dependency finished!\n')
