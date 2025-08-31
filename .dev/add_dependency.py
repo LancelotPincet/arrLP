@@ -31,7 +31,7 @@ def main() :
     proj_path = path.parent / 'libsLP/arrLP/pyproject.toml'
     with open(proj_path, "r") as file :
         data = toml.load(file)
-    dependencies = data['project']['dependencies'] + [name]
+    dependencies = data['project']['dependencies'] + [name.lower()]
     data['project']['dependencies'] = sorted(dependencies)
     with open(proj_path, "w") as file :
         toml.dump(data, file)
