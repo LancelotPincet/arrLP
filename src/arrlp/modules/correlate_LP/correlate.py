@@ -53,7 +53,7 @@ def correlate(arr, k=None, /, out=None, *, method="mean", **kernel_kwargs) :
     >>> from arrlp import correlate
     ...
     >>> correlate(img, sigma=5) # Gaussian correlation
-    >>> correlate(img, windowma=10) # Mask correlation
+    >>> correlate(img, window=10) # Mask correlation
     >>> correlate(img, wl=640, NA=1.5) # Airy correlation
     '''
 
