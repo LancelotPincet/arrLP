@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Date          : 2025-08-28
+# Date          : 
+
 # Author        : Lancelot PINCET
 # GitHub        : https://github.com/LancelotPincet
 
@@ -11,7 +12,7 @@ Upload new realease for arrLP
 
 
 # %% Libraries
-from devlp import path, create_folder
+from devlp import path, create_folder, gh_lib
 import subprocess
 from pathlib import Path
 
@@ -34,7 +35,7 @@ def main() :
         return None
 
     # Push subtree
-    subprocess.run(["git", "subtree", "push", "--prefix=libsLP/arrLP", "arrLP", "main"], cwd=path.parent, stdout=subprocess.PIPE, text=True)
+    gh_lib("arrLP", "new-version")
     print('     pushed newversion to individual repository')
 
     # Build project

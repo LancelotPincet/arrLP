@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Date          : 2025-08-28
+# Date          : 
+
 # Author        : Lancelot PINCET
 # GitHub        : https://github.com/LancelotPincet
 
@@ -11,7 +12,7 @@ Create new script for arrLP
 
 
 # %% Libraries
-from devlp import path
+from devlp import path, copy_file
 from datetime import datetime
 import os
 import toml
@@ -42,30 +43,31 @@ def main() :
             already_exists = False
     description = input('     what will the script do ? >>> ')
     date = datetime.now().strftime("%Y-%m-%d")
+    version = (path.parent / ".python-version").read_text()
+    version = version.replace("\n", "")
 
     # Print informations
     print(f'     name : {name}')
     print(f'     description : {description}')
     print(f'     date : {date}')
+    print(f'     version : {version}')
     if not script_path.exists() :
         os.mkdir(script_path)
 
-    # Function to copy file
-    def copy_file(from_path, to_path) :
-        string = from_path.read_text()
-        string = string.replace('template_scriptname', name)
-        string = string.replace('template_scriptdate', date)
-        string = string.replace('template_scriptdescription', description)
-        string = string.replace('template_scriptlib', "arrLP")
-        string = string.replace('template_scriptlowerlib', "arrlp")
-        string = string.replace('template_scriptequals', "="*len(name))
-        string = string.replace('template_scrlibeq', "="*len("arrLP"))
-        to_path.write_text(string)
-        
+    # Get infos
+    infos = {}
+    infos['scriptname'] = name
+    infos['scriptdate'] = date
+    infos['scriptdescription'] = description
+    infos['scriptlib'] = arrLP
+    infos['scriptlowerlib'] = arrlp
+    infos['scriptequals'] = "="*len(name)
+    infos['scrlibeq'] = "="*len("arrLP")
+                
     # Write python script
-    python_path = path / '_templates/lib_script.txt'
+    python_path = path / '_templates/libraries/main_files/script.py'
     newpython_path = script_path / f'{name}.py'
-    copy_file(python_path, newpython_path)
+    copy_file(python_path, newpython_path, infos)
     with open(script_path / "__init__.py", "w") as file :
         file.write("")
     print('     Script file written [to complete]')
@@ -93,11 +95,13 @@ def main() :
         json.dump(data, file, indent=4, sort_keys=True)
     print("     Script json updated")
 
-    # Create documentation
-    rst_path = path / '_templates/lib_docaddscript.rst'
+    # Add script documentation
+    rst_path = path / '_templates/libraries/documentation/add_script.rst'
     newrst_path = path.parent / f'libsLP/arrLP/docs/source/{name}.rst'
-    copy_file(rst_path, newrst_path)
+    copy_file(rst_path, newrst_path, infos)
+    print('     Documentation rst file added')
 
+    # Add script to documentation list
     allscripts_path = path.parent / f'libsLP/arrLP/docs/source/scripts.rst'
     string = allscripts_path.read_text()
     string = string.replace(f"   {name}\n", "")
@@ -105,8 +109,7 @@ def main() :
         file.write(string)
     with open(allscripts_path, "a") as file :
         file.write(f"   {name}\n")
-
-    print('     Documentation rst file added')
+    print('     Script added to documentation list')
 
     # End
     print('add_script finished!\n')

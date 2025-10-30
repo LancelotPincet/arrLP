@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Date          : 2025-08-28
+# Date          : 
+
 # Author        : Lancelot PINCET
 # GitHub        : https://github.com/LancelotPincet
 
@@ -11,7 +12,7 @@ Create new module for arrLP
 
 
 # %% Libraries
-from devlp import path
+from devlp import path, copy_file
 from datetime import datetime
 import os
 import json
@@ -49,30 +50,28 @@ def main() :
     if not module_path.exists() :
         os.mkdir(module_path)
 
-    # Function to copy file
-    def copy_file(from_path, to_path) :
-        string = from_path.read_text()
-        string = string.replace('template_modulename', name)
-        string = string.replace('template_moduledate', date)
-        string = string.replace('template_moduledescription', description)
-        string = string.replace('template_modulelib', "arrLP")
-        string = string.replace('template_modulelowerlib', "arrlp")
-        string = string.replace('template_moduleequals', "="*len(name))
-        string = string.replace('template_modlibeq', "="*len("arrLP"))
-        to_path.write_text(string)
+    # Get infos
+    infos = {}
+    infos['modulename'] = name
+    infos['moduledate'] = date
+    infos['moduledescription'] = description
+    infos['modulelib'] = arrLP
+    infos['modulelowerlib'] = arrlp
+    infos['moduleequals'] = "="*len(name)
+    infos['modlibeq'] = "="*len("arrLP")
         
     # Write python module
-    python_path = path / '_templates/lib_module.txt'
+    python_path = path / '_templates/libraries/main_files/module.py'
     newpython_path = module_path / f'{name}.py'
-    copy_file(python_path, newpython_path)
+    copy_file(python_path, newpython_path, infos)
     with open(module_path / "__init__.py", "w") as file :
         file.write("")
     print('     Module file written [to complete]')
 
     # Add test
-    python_path = path / '_templates/lib_test.txt'
+    python_path = path / '_templates/libraries/main_files/test.py'
     newpython_path = module_path / f'test_{name}.py'
-    copy_file(python_path, newpython_path)
+    copy_file(python_path, newpython_path, infos)
     print('     Test file written [to complete]')
 
     # Add module to json file
@@ -89,14 +88,16 @@ def main() :
         json.dump(data, file, indent=4, sort_keys=True)
     print("     Module json updated")
 
-    # Create documentation
+    # Add module documentation
     if name[0] == (name.lower())[0] : # if function
-        rst_path = path / '_templates/lib_docaddfunction.rst'
+        rst_path = path / '_templates/libraries/documentation/add_function.rst'
     else : # Class
-        rst_path = path / '_templates/lib_docaddclass.rst'
+        rst_path = path / '_templates/libraries/documentation/add_class.rst'
     newrst_path = path.parent / f'libsLP/arrLP/docs/source/{name}.rst'
-    copy_file(rst_path, newrst_path)
+    copy_file(rst_path, newrst_path, infos)
+    print('     Documentation rst file added')
 
+    # Add module to documentation list
     allmodules_path = path.parent / f'libsLP/arrLP/docs/source/modules.rst'
     string = allmodules_path.read_text()
     string = string.replace(f"   {name}\n", "")
@@ -104,8 +105,7 @@ def main() :
         file.write(string)
     with open(allmodules_path, "a") as file :
         file.write(f"   {name}\n")
-
-    print('     Documentation rst file added')
+    print('     Module added to documentation list')
 
     # End
     print('add_module finished!\n')

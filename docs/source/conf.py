@@ -9,7 +9,8 @@ sys.path.insert(0, os.path.abspath('../../src'))
 
 # Poject informations
 project = 'arrLP'
-copyright = '2025, Lancelot PINCET'
+copyright = '
+, Lancelot PINCET'
 author = 'Lancelot PINCET'
 with open('../../pyproject.toml') as file :
     data = toml.load(file)
