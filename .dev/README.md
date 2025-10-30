@@ -1,4 +1,4 @@
-# .dev file
+# .dev folder
 
 ```text
 Author        : Lancelot PINCET
