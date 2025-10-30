@@ -38,7 +38,7 @@ def main() :
     dependencies = data['project']['dependencies'] + [name.lower()]
     data['project']['dependencies'] = sorted(dependencies)
 
-    # Update workspace
+    # Update source for LP libraries
     if name.lower().endswith("lp") :
         sources = data['tool']['uv']['sources']
         sources[name.lower()] = {"workspace": True}
