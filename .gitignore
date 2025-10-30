@@ -1,9 +1,9 @@
 # pythonLP
 **/.venv/
 **/.icons/
-**/.libs_links/
 **/.links/
 **/.debug/
+**/.dev/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
