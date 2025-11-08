@@ -7,7 +7,7 @@ import toml
 # Add path
 sys.path.insert(0, os.path.abspath('../../src'))
 
-# Poject informations
+# Project informations
 project = 'arrLP'
 copyright = '
 , Lancelot PINCET'
