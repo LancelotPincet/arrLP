@@ -23,12 +23,6 @@
         "module": "modules/kernel_LP/kernel",
         "object": "kernel"
     },
-    "matplotlib": {
-        "date": "2025-08-30",
-        "description": "",
-        "module": "modules/matplotlib_LP/matplotlib",
-        "object": "matplotlib"
-    },
     "relabel": {
         "date": "2025-08-31",
         "description": "This function redefines a label array to fill potential holes inside.",

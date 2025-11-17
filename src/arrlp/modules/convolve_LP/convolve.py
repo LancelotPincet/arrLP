@@ -49,7 +49,7 @@ def convolve(arr, k=None, /, out=None, **kwargs) :
     >>> from arrlp import correlate
     ...
     >>> convolve(img, sigma=5) # Gaussian convolve
-    >>> convolve(img, windowma=10) # Mask convolve
+    >>> convolve(img, window=10) # Mask convolve
     >>> convolve(img, wl=640, NA=1.5) # Airy convolve
     '''
 
