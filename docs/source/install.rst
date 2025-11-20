@@ -1,33 +1,155 @@
 Installation
 ============
 
-**arrLP** uses `uv <https://docs.astral.sh/uv>`_ from *Astral* for installation and environment management.
-As it is simple and has an all-in-one solution, switching your project to *uv* is highly recommended if you do not use it yet.
+In this section, we will see how **arrLP** can be installed in your Python projects. We will first do a quick reminder on CLI basics necessary to install comfortably the library. Then, we will explain how to create a fresh project compatible with it using *uv*. Finally, we will show how to contribute to the source code development by cloning the repository with *git*.
 
-1. Install uv
--------------
+1. CLI reminder
+---------------
 
-For installation, the simplest way is to use a package manager like ``Winget`` or ``Scoop`` on Windows, and ``Homebrew`` on Linux and macOS.
+For installation, you will need to use a **C**ommand **L**ine **I**nterface (CLI) like your system terminal. If you are using Windows or macOS, you might not be familiar with these, so we will first do a quick reminder for these two OS. If you are using Linux, I suppose you will not need these and you can skip to the next part.
 
-For using `Winget <https://winstall.app/apps/astral-sh.uv>`_, write in PowerShell:
+Opening the terminal
+~~~~~~~~~~~~~~~~~~~~
 
-.. code-block:: powershell
+.. tabs::
 
-   winget install --id=astral-sh.uv -e
+   .. tab:: Windows
+      First, you will need to open a terminal window: search for **"Windows PowerShell"** in the Start Menu (or press **Win + R**, type **PowerShell**, then press **Enter**)
+      A terminal window will appear with something like: ``PS C:\Users\myusername> _``
 
-For using `Scoop <https://scoop.sh/#/apps?q=uv>`_, write in PowerShell:
+   .. tab:: macOS
+      First, you will need to open a terminal window: open **Applications → Utilities → Terminal** (or press **Cmd + Space**, type **Terminal**, and press **Enter**)
+      A terminal window will appear with something like: ``MacBook:~ myusername$ _``
 
-.. code-block:: powershell
+When the cursor (``_``) is blinking, it means you can type a command.  
+The path you see on the left of the line is your **current directory**—the folder from which commands will be executed.
 
-   scoop install main/uv
+Commands generally follow this structure: ``command-name argument --option1 value --option2 value``
+Options usually start with ``--option-name``, but one-letter shortcuts like `-y` for `--yes` may exist.
+When a command is known by your system, you can type the beginning and press **Tab** to auto-complete it.
+To learn more about available commands and their options, refer to online documentation (or ask your favorite AI assistant).
 
-For using Homebrew, write in bash:
+.. warning::
 
-.. code-block:: bash
+   For real noobs like me who come from Python courses, you might be used to Python editors ("IDE" = **I**ntegrated **D**evelopment **E**nvironment) with a shell. Therefore, you might think the PowerShell command lines accept Python commands, **which is wrong**.
+   
+   The Python editors shell launch under the hood a Python interpreter. You can identify if you are in a Python interpreter as the Python CLI starts with `>>> _`. To launch a Python interpreter in the terminal and get the same behavior as your Python editors, you need to have Python installed on your machine and write `python` to open the interpreter.
 
-   brew install uv
+Navigation commands
+~~~~~~~~~~~~~~~~~~~
 
-If you still want to install uv using standalone installers or other methods, please refer to their `installation website <https://docs.astral.sh/uv/getting-started/installation/>`_.
+In the OS terminal, `cd` (**C**hange **D**irectory) lets you move between folders.
+
+.. tabs::
+
+   .. tab:: Windows
+      In Windows, folders are separated by ``\``
+      ``cd`` command can be used various ways:
+         - change directory using an absolute path: ``cd full\path\to\new\directory``
+         - go to the parent folder: ``cd ..``
+         - navigate to a folder inside your current directory: ``cd relative\path\inside\current\directory``
+         - combine movements, for example to reach a folder inside the grandparent directory:  ``cd ..\..\relative\path\to\folder``
+         - go to your user home directory: ``cd ~``
+
+   .. tab:: macOS
+      In macOS, folders are separated by ``/`` (like in Linux)
+      ``cd`` command can be used various ways:
+         - change directory using an absolute path: ``cd full/path/to/new/directory``
+         - go to the parent folder: ``cd ..``
+         - navigate to a folder inside your current directory: ``cd relative/path/inside/current/directory``
+         - combine movements, for example to reach a folder inside the grandparent directory:  ``cd ../../relative/path/to/folder``
+         - go to your user home directory: ``cd ~``
+         - go back to previous directory (macOS only): ``cd -``
+
+Folder management commands
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+.. tabs::
+
+   .. tab:: Windows
+      - list folders and files in current **dir**ectory: ``dir``
+      - **m**a**k**e a new **dir**ectory (=folder): ``mkdir MyFolderName``
+      - **r**e**m**ove a **dir**ectory: ``rmdir MyFolderName``
+      - **del**ete a file: ``del MyFile.txt``
+
+
+   .. tab:: macOS
+      - **l**i**s**t folders and files in current directory: ``ls``
+      - **m**a**k**e a new **dir**ectory (=folder): ``mkdir MyFolderName``
+      - **r**e**m**ove a directory (**r**ecursive delete): ``rm -r MyFolderName``
+      - **r**e**m**ove a file: ``rm MyFile.txt``
+
+2. Create project
+-----------------
+
+To create a project dependent on **arrLP** I highly recommand using `*uv* <https://docs.astral.sh/uv/getting-started/installation/>`_ from *Astral* for installation and environment management as it is a very fast and all-in-one solution. However, if you are used to using *Anaconda*, we will also show how to initialize with this distribution at the end of this subsection.
+
+Install *uv*
+~~~~~~~~~~~~
+
+To check if *uv* is installed, you can try the following command. If it gives you a version, than *uv* is already installed!
+
+.. code-block:: shell
+
+   uv --version
+
+If it fails, you need to install *uv*.
+
+.. tabs::
+
+   .. tab:: Linux
+      you can install with *curl*:
+      .. code-block:: shell
+
+         curl -LsSf https://astral.sh/uv/install.sh | sh
+
+      If *curl* did not seem to be installed, install it before following the command corresponding to your distro:
+      - **Debian** and **Ubuntu**: ``sudo apt update && sudo apt install curl -y``
+      - **Fedora**: ``sudo dnf install curl -y``
+      - **Arch Linux** and **Manjaro**: ``sudo pacman -S curl``
+
+   .. tab:: Windows
+      I recommand using a package manager for the installation. You can use one the following:
+      - `**WinGet <https://winstall.app/`_: ``winget install --id=astral-sh.uv  -e``
+      - `**Scoop <https://scoop.sh/`_: ``scoop install main/uv``
+      - `**Chocolatey <https://chocolatey.org/install`_: ``choco install uv``
+
+      If you want to install *uv* using standalone installers or other methods, please refer to their `installation website <https://docs.astral.sh/uv/getting-started/installation/`_
+
+   .. tab:: macOS
+      I recommand using a package manager for the installation. You can use one the following:
+      - `**Homebrew <https://brew.sh/`_: ``brew install uv``
+      - **curl**: Follow the same steps as for the Linux protocole.
+      - `**MacPorts <https://www.macports.org/install.php`_: ``sudo port selfupdate && sudo port install uv``
+
+      If you want to install *uv* using standalone installers or other methods, please refer to their `installation website <https://docs.astral.sh/uv/getting-started/installation/`_
+
+Now *uv* should be installed on your macOS machine!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

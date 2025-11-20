@@ -22,6 +22,7 @@ extensions = [
     'sphinx.ext.viewcode', # links to the codes
     'sphinx.ext.napoleon', # Google/NumPy docstrings
     'sphinx.ext.todo', # Google/NumPy docstrings
+    'sphinx_tabs.tabs', # Enable tabs
     ]
 
 exclude_patterns = []
