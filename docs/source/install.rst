@@ -1,12 +1,21 @@
 Installation
 ============
 
-In this section, we will see how **arrLP** can be installed in your Python projects. We will first do a quick reminder on CLI basics necessary to install comfortably the library. Then, we will explain how to create a fresh project compatible with it using *uv*. Finally, we will show how to contribute to the source code development by cloning the repository with *git*.
+In this section, we will see how **arrLP** can be installed in your Python projects.
+We will first do a quick :ref:`reminder on CLI basics <_cli_reminder>`_ necessary to install comfortably the library.
+Then, we will explain how to :ref:`create a fresh project <_create_project>`_ compatible with it using *uv*.
+Finally, we will show how to :ref:`contribute to the source code development <_get_source_code>`_ by cloning the repository with *git*.
+
+.. _cli_reminder:
 
 1. CLI reminder
 ---------------
 
-For installation, you will need to use a **C**ommand **L**ine **I**nterface (CLI) like your system terminal. If you are using Windows or macOS, you might not be familiar with these, so we will first do a quick reminder for these two OS. If you are using Linux, I suppose you will not need these and you can skip to the next part.
+For installation, you will need to use a **C**ommand **L**ine **I**nterface (CLI) like your system terminal.
+If you are using Windows or macOS, you might not be familiar with these, so we will first do a quick reminder for these two OS.
+If you are using Linux, I suppose you will not need these and you can skip to the :ref:`project creation part <_create_project>`_.
+
+.. _opening_the_terminal:
 
 Opening the terminal
 ~~~~~~~~~~~~~~~~~~~~
@@ -35,6 +44,8 @@ To learn more about available commands and their options, refer to online docume
    
    The Python editors shell launch under the hood a Python interpreter. You can identify if you are in a Python interpreter as the Python CLI starts with `>>> _`. To launch a Python interpreter in the terminal and get the same behavior as your Python editors, you need to have Python installed on your machine and write `python` to open the interpreter.
 
+.. _navigation_commands:
+
 Navigation commands
 ~~~~~~~~~~~~~~~~~~~
 
@@ -61,6 +72,8 @@ In the OS terminal, `cd` (**C**hange **D**irectory) lets you move between folder
          - go to your user home directory: ``cd ~``
          - go back to previous directory (macOS only): ``cd -``
 
+.. _folder_management_commands:
+
 Folder management commands
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
  
@@ -79,10 +92,31 @@ Folder management commands
       - **r**e**m**ove a directory (**r**ecursive delete): ``rm -r MyFolderName``
       - **r**e**m**ove a file: ``rm MyFile.txt``
 
+.. _create_project:
+
 2. Create project
 -----------------
 
-To create a project dependent on **arrLP** I highly recommand using `*uv* <https://docs.astral.sh/uv/getting-started/installation/>`_ from *Astral* for installation and environment management as it is a very fast and all-in-one solution. However, if you are used to using *Anaconda*, we will also show how to initialize with this distribution at the end of this subsection.
+Here, we want to create a new Python project with a dependency on **arrLP**.
+To make this kind of project functional, there are several steps to follow :
+- :ref:`initialize the project folder <_initialize_project_with_uv>`_:
+   1. define a *pyproject.toml* file to write dependencies and other metadata
+   2. define a *README.md* file
+   3. add dependencies
+- :ref:`create a virtual environment <_create_virtual_environment_with_uv>`_:
+   1. Solve the dependencies versions
+   2. install Python on your machine
+   3. create a virtual environment
+   4. activate the virtual environment
+   5. install dependencies
+- :ref:`run the script from a fresh terminal <_run_script_with_uv>`_:
+   1. activate the virtual environment
+   2. run the script
+
+As these are tedious to achieve manually, I highly recommend using `*uv* <https://docs.astral.sh/uv/getting-started/installation/>`_ from *Astral* for installation and environment management as it is a very fast and all-in-one solution.
+However, if you are used to using *Anaconda*, we will also show how to initialize with this distribution at the :ref:`end of this subsection <_create_project_with_anaconda>`_.
+
+.. _install_uv:
 
 Install *uv*
 ~~~~~~~~~~~~
@@ -110,69 +144,85 @@ If it fails, you need to install *uv*.
 
    .. tab:: Windows
       I recommand using a package manager for the installation. You can use one the following:
-      - `**WinGet <https://winstall.app/`_: ``winget install --id=astral-sh.uv  -e``
-      - `**Scoop <https://scoop.sh/`_: ``scoop install main/uv``
-      - `**Chocolatey <https://chocolatey.org/install`_: ``choco install uv``
+      - `**WinGet <https://winstall.app/>`_: ``winget install --id=astral-sh.uv  -e``
+      - `**Scoop <https://scoop.sh/>`_: ``scoop install main/uv``
+      - `**Chocolatey <https://chocolatey.org/install>`_: ``choco install uv``
 
-      If you want to install *uv* using standalone installers or other methods, please refer to their `installation website <https://docs.astral.sh/uv/getting-started/installation/`_
+      If you want to install *uv* using standalone installers or other methods, please refer to their `installation website <https://docs.astral.sh/uv/getting-started/installation/>`_
 
    .. tab:: macOS
       I recommand using a package manager for the installation. You can use one the following:
-      - `**Homebrew <https://brew.sh/`_: ``brew install uv``
+      - `**Homebrew <https://brew.sh/>`_: ``brew install uv``
       - **curl**: Follow the same steps as for the Linux protocole.
-      - `**MacPorts <https://www.macports.org/install.php`_: ``sudo port selfupdate && sudo port install uv``
+      - `**MacPorts <https://www.macports.org/install.php>`_: ``sudo port selfupdate && sudo port install uv``
 
-      If you want to install *uv* using standalone installers or other methods, please refer to their `installation website <https://docs.astral.sh/uv/getting-started/installation/`_
+      If you want to install *uv* using standalone installers or other methods, please refer to their `installation website <https://docs.astral.sh/uv/getting-started/installation/>`_
 
 Now *uv* should be installed on your macOS machine!
 
+.. _initialize_project_with_uv:
 
+Initialize a project with *uv*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-2. Create a project using uv
-----------------------------
-
-To create a project with a dependency on **arrLP**, just type in your console by filling ``PATH_TO_PROJECT_PARENT``:
+Let's assume we changed directory with `cd` to the parent folder of our future project.
+To initialize a project called `my_project` with *uv*, use command:
 
 .. code-block:: shell
 
-   cd PATH_TO_PROJECT_PARENT
    uv init my_project
    cd my_project
 
-Then just add your project dependency to **arrLP**:
+This will create a folder with a *pyproject.toml* file, a *README.md* file and a *main.py* file.
+
+Then, we just need to add the dependencies to uor project, typically dependency to **arrLP**, with the command:
 
 .. code-block:: shell
 
    uv add arrLP
+
+You can redo this command for all the dependencies you might need by replacing the "arrLP" by the other dependency name (the name used in the command *pip*).
+For more informations, go to the [*uv*](https://docs.astral.sh/uv) website.
+The project is now initialized!
+
+.. _create_virtual_environment_with_uv:
+
+Create virtual environment with *uv*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+With *uv*, you can do all five steps defined for the Python virtual environment definition above at once. First go to the project directory with `cd path_to_my_project`(replace `path_to_my_project`).
+*uv* can then:
+1. look at the *pyproject.toml* file and solve the Python & dependencies versions that are necessary by storing them in a *uv.lock* file
+2. look if the necessary Python distribution is in your machine, if not will download it online
+3. look if you have already a virtual environment folder (*.venv*), if not will create it
+4. activate the *.venv*
+5. look if all dependencies versions are installed, if not will install them from *pip*
+
+*uv* gives you commands if you want to do these individually:
+- step 1 only: `uv lock`
+- step 2 only: `uv python install`
+- step 3 to 4: `uv venv`
+- step 1 to 5: `uv sync`
+For more informations, go to the [*uv*](https://docs.astral.sh/uv) website.
+
+At the end, to create the virtual environment, you only need to use:
+
+.. code-block:: shell
+
    uv sync
 
-Now your virtual environment with **arrLP** should appear in your project folder as *.venv*. 
-For more information on how to manage your projects with uv, please refer to their `project guide <https://docs.astral.sh/uv/guides/projects/>`_ and their `project reference page <https://docs.astral.sh/uv/concepts/projects/>`_.
+The project virtual environment *.venv* should now be created!
+
+.. _run_script_with_uv:
+
+Run script with *uv*
+~~~~~~~~~~~~~~~~~~~~
+
+
+
+
+
+
 
 3. Run your scripts with uv
 ---------------------------
