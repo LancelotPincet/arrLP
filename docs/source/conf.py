@@ -15,6 +15,7 @@ with open('../../pyproject.toml') as file :
     data = toml.load(file)
 version = data['project']['version']
 release = version
+master_doc = 'index'
 
 # Sphinx extensions
 extensions = [
@@ -22,10 +23,118 @@ extensions = [
     'sphinx.ext.viewcode', # links to the codes
     'sphinx.ext.napoleon', # Google/NumPy docstrings
     'sphinx.ext.todo', # Google/NumPy docstrings
-    'sphinx_tabs.tabs', # Enable tabs
+    'sphinx_design', # Enable tabs, dropdowns, cards and alerts
     ]
 
 exclude_patterns = []
 
 # Build
 html_theme = 'sphinx_rtd_theme'
+
+# -----------------------------
+# PDF / LaTeX styling
+# -----------------------------
+
+# Use XeLaTeX for modern fonts and Unicode support
+latex_engine = 'xelatex'
+
+# LaTeX document settings
+latex_documents = [
+    (master_doc, f'{project}.tex', f'{project} Documentation',
+     author, 'manual'),
+]
+
+# Customize LaTeX elements
+latex_elements = {
+    # Paper size and font size
+    'papersize': 'a4paper',
+    'pointsize': '11pt',
+    'figure_align': 'htbp',
+
+    # Preamble: fonts, colors, boxes, and code
+    'preamble': r'''
+% -----------------------------
+% Fonts
+% -----------------------------
+\usepackage{fontspec}
+\setmainfont{TeXGyreTermes}   % serif font for body
+\setsansfont{TeXGyreHeros}    % sans-serif like RTD
+\setmonofont{Fira Code}         % monospace for code
+
+\usepackage{setspace}
+\onehalfspacing
+
+% -----------------------------
+% Colored boxes for notes and warnings
+% -----------------------------
+\usepackage{tcolorbox}
+\tcbuselibrary{listings}
+
+\newtcolorbox{notebox}{
+  colback=blue!5!white,
+  colframe=blue!75!black,
+  boxrule=0.5pt,
+  arc=4pt,
+  left=2mm, right=2mm, top=1mm, bottom=1mm
+}
+\newtcolorbox{warningbox}{
+  colback=red!5!white,
+  colframe=red!75!black,
+  boxrule=0.5pt,
+  arc=4pt,
+  left=2mm, right=2mm, top=1mm, bottom=1mm
+}\newtcolorbox{tipbox}{
+  colback=green!5!white,
+  colframe=green!75!black,
+  boxrule=0.5pt, arc=4pt, left=2mm, right=2mm, top=1mm, bottom=1mm
+}
+\newtcolorbox{importantbox}{
+  colback=yellow!5!white,
+  colframe=yellow!75!black,
+  boxrule=0.5pt, arc=4pt, left=2mm, right=2mm, top=1mm, bottom=1mm
+}
+\newtcolorbox{cautionbox}{
+  colback=orange!5!white,
+  colframe=orange!75!black,
+  boxrule=0.5pt, arc=4pt, left=2mm, right=2mm, top=1mm, bottom=1mm
+}
+
+% Map Sphinx admonitions to tcolorbox
+\let\oldnote\note
+\renewcommand{\note}[1]{\begin{notebox}#1\end{notebox}}
+\let\oldwarning\warning
+\renewcommand{\warning}[1]{\begin{warningbox}#1\end{warningbox}}
+\let\oldtip\tip
+\renewcommand{\tip}[1]{\begin{tipbox}#1\end{tipbox}}
+\let\oldimportant\important
+\renewcommand{\important}[1]{\begin{importantbox}#1\end{importantbox}}
+\let\oldcaution\caution
+\renewcommand{\caution}[1]{\begin{cautionbox}#1\end{cautionbox}}
+
+% -----------------------------
+% Code block styling
+% -----------------------------
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue},
+  commentstyle=\color{gray},
+  stringstyle=\color{orange},
+  breaklines=true,
+  frame=single,
+  frameround=tttt,
+  backgroundcolor=\color{gray!5},
+}
+
+% -----------------------------
+% Section headers
+% -----------------------------
+\usepackage{titlesec}
+\titleformat{\section}{\large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries}{\thesubsubsection}{1em}{}
+''',
+}
+

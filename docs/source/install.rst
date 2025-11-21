@@ -12,86 +12,89 @@ Finally, we will show how to :ref:`contribute to the source code development <_g
 ---------------
 
 For installation, you will need to use a **C**ommand **L**ine **I**nterface (CLI) like your system terminal.
-If you are using Windows or macOS, you might not be familiar with these, so we will first do a quick reminder for these two OS.
+If you are using Windows or macOS, you might not be familiar with these, so we will first do a quick reminder for these two OS in the dropdown menu bellow.
 If you are using Linux, I suppose you will not need these and you can skip to the :ref:`project creation part <_create_project>`_.
 
-.. _opening_the_terminal:
+.. dropdown:: CLI basics
+   :icon: chevron-down
 
-Opening the terminal
-~~~~~~~~~~~~~~~~~~~~
-
-.. tabs::
-
-   .. tab:: Windows
-      First, you will need to open a terminal window: search for **"Windows PowerShell"** in the Start Menu (or press **Win + R**, type **PowerShell**, then press **Enter**)
-      A terminal window will appear with something like: ``PS C:\Users\myusername> _``
-
-   .. tab:: macOS
-      First, you will need to open a terminal window: open **Applications → Utilities → Terminal** (or press **Cmd + Space**, type **Terminal**, and press **Enter**)
-      A terminal window will appear with something like: ``MacBook:~ myusername$ _``
-
-When the cursor (``_``) is blinking, it means you can type a command.  
-The path you see on the left of the line is your **current directory**—the folder from which commands will be executed.
-
-Commands generally follow this structure: ``command-name argument --option1 value --option2 value``
-Options usually start with ``--option-name``, but one-letter shortcuts like `-y` for `--yes` may exist.
-When a command is known by your system, you can type the beginning and press **Tab** to auto-complete it.
-To learn more about available commands and their options, refer to online documentation (or ask your favorite AI assistant).
-
-.. warning::
-
-   For real noobs like me who come from Python courses, you might be used to Python editors ("IDE" = **I**ntegrated **D**evelopment **E**nvironment) with a shell. Therefore, you might think the PowerShell command lines accept Python commands, **which is wrong**.
+   .. _opening_the_terminal:
    
-   The Python editors shell launch under the hood a Python interpreter. You can identify if you are in a Python interpreter as the Python CLI starts with `>>> _`. To launch a Python interpreter in the terminal and get the same behavior as your Python editors, you need to have Python installed on your machine and write `python` to open the interpreter.
+   Opening the terminal
+   ~~~~~~~~~~~~~~~~~~~~
 
-.. _navigation_commands:
-
-Navigation commands
-~~~~~~~~~~~~~~~~~~~
-
-In the OS terminal, `cd` (**C**hange **D**irectory) lets you move between folders.
-
-.. tabs::
-
-   .. tab:: Windows
-      In Windows, folders are separated by ``\``
-      ``cd`` command can be used various ways:
-         - change directory using an absolute path: ``cd full\path\to\new\directory``
-         - go to the parent folder: ``cd ..``
-         - navigate to a folder inside your current directory: ``cd relative\path\inside\current\directory``
-         - combine movements, for example to reach a folder inside the grandparent directory:  ``cd ..\..\relative\path\to\folder``
-         - go to your user home directory: ``cd ~``
-
-   .. tab:: macOS
-      In macOS, folders are separated by ``/`` (like in Linux)
-      ``cd`` command can be used various ways:
-         - change directory using an absolute path: ``cd full/path/to/new/directory``
-         - go to the parent folder: ``cd ..``
-         - navigate to a folder inside your current directory: ``cd relative/path/inside/current/directory``
-         - combine movements, for example to reach a folder inside the grandparent directory:  ``cd ../../relative/path/to/folder``
-         - go to your user home directory: ``cd ~``
-         - go back to previous directory (macOS only): ``cd -``
-
-.. _folder_management_commands:
-
-Folder management commands
-~~~~~~~~~~~~~~~~~~~~~~~~~~
- 
-.. tabs::
-
-   .. tab:: Windows
-      - list folders and files in current **dir**ectory: ``dir``
-      - **m**a**k**e a new **dir**ectory (=folder): ``mkdir MyFolderName``
-      - **r**e**m**ove a **dir**ectory: ``rmdir MyFolderName``
-      - **del**ete a file: ``del MyFile.txt``
-
-
-   .. tab:: macOS
-      - **l**i**s**t folders and files in current directory: ``ls``
-      - **m**a**k**e a new **dir**ectory (=folder): ``mkdir MyFolderName``
-      - **r**e**m**ove a directory (**r**ecursive delete): ``rm -r MyFolderName``
-      - **r**e**m**ove a file: ``rm MyFile.txt``
-
+   .. tabs::
+   
+         .. tab:: Windows
+         First, you will need to open a terminal window: search for **"Windows PowerShell"** in the Start Menu (or press **Win + R**, type **PowerShell**, then press **Enter**)
+         A terminal window will appear with something like: ``PS C:\Users\myusername> _``
+   
+      .. tab:: macOS
+         First, you will need to open a terminal window: open **Applications → Utilities → Terminal** (or press **Cmd + Space**, type **Terminal**, and press **Enter**)
+         A terminal window will appear with something like: ``MacBook:~ myusername$ _``
+   
+   When the cursor (``_``) is blinking, it means you can type a command.  
+   The path you see on the left of the line is your **current directory**—the folder from which commands will be executed.
+   
+   Commands generally follow this structure: ``command-name argument --option1 value --option2 value``
+   Options usually start with ``--option-name``, but one-letter shortcuts like ``-y`` for ``--yes`` may exist.
+   When a command is known by your system, you can type the beginning and press **Tab** to auto-complete it.
+   To learn more about available commands and their options, refer to online documentation (or ask your favorite AI assistant).
+   
+   .. warning::
+   
+      For real noobs like me who come from Python courses, you might be used to Python editors ("IDE" = **I**ntegrated **D**evelopment **E**nvironment) with a shell. Therefore, you might think the PowerShell command lines accept Python commands, **which is wrong**.
+      
+      The Python editors shell launch under the hood a Python interpreter. You can identify if you are in a Python interpreter as the Python CLI starts with `>>> _`. To launch a Python interpreter in the terminal and get the same behavior as your Python editors, you need to have Python installed on your machine and write `python` to open the interpreter.
+   
+   .. _navigation_commands:
+   
+   Navigation commands
+   ~~~~~~~~~~~~~~~~~~~
+   
+   In the OS terminal, `cd` (**C**hange **D**irectory) lets you move between folders.
+   
+   .. tabs::
+   
+      .. tab:: Windows
+         In Windows, folders are separated by ``\``
+         ``cd`` command can be used various ways:
+            - change directory using an absolute path: ``cd full\path\to\new\directory``
+            - go to the parent folder: ``cd ..``
+            - navigate to a folder inside your current directory: ``cd relative\path\inside\current\directory``
+            - combine movements, for example to reach a folder inside the grandparent directory:  ``cd ..\..\relative\path\to\folder``
+            - go to your user home directory: ``cd ~``
+   
+      .. tab:: macOS
+         In macOS, folders are separated by ``/`` (like in Linux)
+         ``cd`` command can be used various ways:
+            - change directory using an absolute path: ``cd full/path/to/new/directory``
+            - go to the parent folder: ``cd ..``
+            - navigate to a folder inside your current directory: ``cd relative/path/inside/current/directory``
+            - combine movements, for example to reach a folder inside the grandparent directory:  ``cd ../../relative/path/to/folder``
+            - go to your user home directory: ``cd ~``
+            - go back to previous directory (macOS only): ``cd -``
+   
+   .. _folder_management_commands:
+   
+   Folder management commands
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+   .. tabs::
+   
+      .. tab:: Windows
+         - list folders and files in current **dir**ectory: ``dir``
+         - **m**a**k**e a new **dir**ectory (=folder): ``mkdir MyFolderName``
+         - **r**e**m**ove a **dir**ectory: ``rmdir MyFolderName``
+         - **del**ete a file: ``del MyFile.txt``
+   
+   
+      .. tab:: macOS
+         - **l**i**s**t folders and files in current directory: ``ls``
+         - **m**a**k**e a new **dir**ectory (=folder): ``mkdir MyFolderName``
+         - **r**e**m**ove a directory (**r**ecursive delete): ``rm -r MyFolderName``
+         - **r**e**m**ove a file: ``rm MyFile.txt``
+   
 .. _create_project:
 
 2. Create project
@@ -101,7 +104,7 @@ Here, we want to create a new Python project with a dependency on **arrLP**.
 To make this kind of project functional, there are several steps to follow :
 - :ref:`initialize the project folder <_initialize_project_with_uv>`_:
    1. define a *pyproject.toml* file to write dependencies and other metadata
-   2. define a *README.md* file
+   2. define a *README.md* file for documentation notes and explanations
    3. add dependencies
 - :ref:`create a virtual environment <_create_virtual_environment_with_uv>`_:
    1. Solve the dependencies versions
@@ -109,56 +112,60 @@ To make this kind of project functional, there are several steps to follow :
    3. create a virtual environment
    4. activate the virtual environment
    5. install dependencies
-- :ref:`run the script from a fresh terminal <_run_script_with_uv>`_:
+- :ref:`run the script from a fresh terminal <_run_script_with_virtual_environment>`_:
    1. activate the virtual environment
    2. run the script
 
 As these are tedious to achieve manually, I highly recommend using `*uv* <https://docs.astral.sh/uv/getting-started/installation/>`_ from *Astral* for installation and environment management as it is a very fast and all-in-one solution.
-However, if you are used to using *Anaconda*, we will also show how to initialize with this distribution at the :ref:`end of this subsection <_create_project_with_anaconda>`_.
+However, if you do not want to use *uv*, for example if you are used to using *Anaconda distribution*, or for any other reason, we will also show how to initialize the project without *uv* at the :ref:`end of this subsection <_create_project_without_uv>`_.
 
-.. _install_uv:
-
-Install *uv*
-~~~~~~~~~~~~
-
-To check if *uv* is installed, you can try the following command. If it gives you a version, than *uv* is already installed!
-
-.. code-block:: shell
-
-   uv --version
-
-If it fails, you need to install *uv*.
-
-.. tabs::
-
-   .. tab:: Linux
-      you can install with *curl*:
-      .. code-block:: shell
-
-         curl -LsSf https://astral.sh/uv/install.sh | sh
-
-      If *curl* did not seem to be installed, install it before following the command corresponding to your distro:
-      - **Debian** and **Ubuntu**: ``sudo apt update && sudo apt install curl -y``
-      - **Fedora**: ``sudo dnf install curl -y``
-      - **Arch Linux** and **Manjaro**: ``sudo pacman -S curl``
-
-   .. tab:: Windows
-      I recommand using a package manager for the installation. You can use one the following:
-      - `**WinGet <https://winstall.app/>`_: ``winget install --id=astral-sh.uv  -e``
-      - `**Scoop <https://scoop.sh/>`_: ``scoop install main/uv``
-      - `**Chocolatey <https://chocolatey.org/install>`_: ``choco install uv``
-
-      If you want to install *uv* using standalone installers or other methods, please refer to their `installation website <https://docs.astral.sh/uv/getting-started/installation/>`_
-
-   .. tab:: macOS
-      I recommand using a package manager for the installation. You can use one the following:
-      - `**Homebrew <https://brew.sh/>`_: ``brew install uv``
-      - **curl**: Follow the same steps as for the Linux protocole.
-      - `**MacPorts <https://www.macports.org/install.php>`_: ``sudo port selfupdate && sudo port install uv``
-
-      If you want to install *uv* using standalone installers or other methods, please refer to their `installation website <https://docs.astral.sh/uv/getting-started/installation/>`_
-
-Now *uv* should be installed on your macOS machine!
+.. dropdown:: If *uv* is not installed (or you are unsure)
+   :icon: chevron-down
+   
+   .. _install_uv:
+   
+   Install *uv*
+   ~~~~~~~~~~~~
+   
+   To check if *uv* is installed, you can try the following command.
+   If it gives you a version, than *uv* is already installed!
+   
+   .. code-block:: shell
+   
+      uv --version
+   
+   If it fails, you need to install *uv*.
+   
+   .. tabs::
+   
+      .. tab:: Linux
+         you can install with *curl*:
+         .. code-block:: shell
+   
+            curl -LsSf https://astral.sh/uv/install.sh | sh
+   
+         If *curl* did not seem to be installed, install it before following the command corresponding to your distro:
+         - **Debian** and **Ubuntu**: ``sudo apt update && sudo apt install curl -y``
+         - **Fedora**: ``sudo dnf install curl -y``
+         - **Arch Linux** and **Manjaro**: ``sudo pacman -S curl``
+   
+      .. tab:: Windows
+         I recommand using a package manager for the installation. You can use one the following:
+         - `**WinGet** <https://winstall.app/>`_: ``winget install --id=astral-sh.uv  -e``
+         - `**Scoop** <https://scoop.sh/>`_: ``scoop install main/uv``
+         - `**Chocolatey** <https://chocolatey.org/install>`_: ``choco install uv``
+   
+         If you want to install *uv* using standalone installers or other methods, please refer to their `installation website <https://docs.astral.sh/uv/getting-started/installation/>`_
+   
+      .. tab:: macOS
+         I recommand using a package manager for the installation. You can use one the following:
+         - `**Homebrew** <https://brew.sh/>`_: ``brew install uv``
+         - **curl**: Follow the same steps as for the Linux protocole.
+         - `**MacPorts** <https://www.macports.org/install.php>`_: ``sudo port selfupdate && sudo port install uv``
+   
+         If you want to install *uv* using standalone installers or other methods, please refer to their `installation website <https://docs.astral.sh/uv/getting-started/installation/>`_
+   
+   Now *uv* should be installed on your macOS machine!
 
 .. _initialize_project_with_uv:
 
@@ -173,16 +180,16 @@ To initialize a project called `my_project` with *uv*, use command:
    uv init my_project
    cd my_project
 
-This will create a folder with a *pyproject.toml* file, a *README.md* file and a *main.py* file.
+This will create a folder with a *pyproject.toml* file, a *README.md* file and a *main.py* file, then change directory inside the project.
 
-Then, we just need to add the dependencies to uor project, typically dependency to **arrLP**, with the command:
+Then, we just need to add the dependencies to your project, typically dependency to **arrLP**, with the command:
 
 .. code-block:: shell
 
-   uv add arrLP
+   uv add arrlp
 
-You can redo this command for all the dependencies you might need by replacing the "arrLP" by the other dependency name (the name used in the command *pip*).
-For more informations, go to the [*uv*](https://docs.astral.sh/uv) website.
+You can redo this command for all the dependencies you might need by replacing the "arrLP" by the other dependency name (the name ususally used in the command *pip*).
+For more informations, go to the `*uv* project <https://docs.astral.sh/uv/guides/projects/>`_ website.
 The project is now initialized!
 
 .. _create_virtual_environment_with_uv:
@@ -190,7 +197,7 @@ The project is now initialized!
 Create virtual environment with *uv*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-With *uv*, you can do all five steps defined for the Python virtual environment definition above at once. First go to the project directory with `cd path_to_my_project`(replace `path_to_my_project`).
+With *uv*, you can do all five steps defined for the Python virtual environment definition above at once. First go to the project directory with ``cd path_to_my_project`` (replace ``path_to_my_project``).
 *uv* can then:
 1. look at the *pyproject.toml* file and solve the Python & dependencies versions that are necessary by storing them in a *uv.lock* file
 2. look if the necessary Python distribution is in your machine, if not will download it online
@@ -199,13 +206,13 @@ With *uv*, you can do all five steps defined for the Python virtual environment 
 5. look if all dependencies versions are installed, if not will install them from *pip*
 
 *uv* gives you commands if you want to do these individually:
-- step 1 only: `uv lock`
-- step 2 only: `uv python install`
-- step 3 to 4: `uv venv`
-- step 1 to 5: `uv sync`
-For more informations, go to the [*uv*](https://docs.astral.sh/uv) website.
+- step 1 only: ``uv lock``
+- step 2 only: ``uv python install``
+- step 3 to 4: ``uv venv``
+- step 1 to 5: ``uv sync``
+For more informations, go to the `*uv* commands <https://docs.astral.sh/uv/reference/cli/>`_ website.
 
-At the end, to create the virtual environment, you only need to use:
+But in fact, to create the virtual environment from scratch, you only need to use:
 
 .. code-block:: shell
 
@@ -213,93 +220,196 @@ At the end, to create the virtual environment, you only need to use:
 
 The project virtual environment *.venv* should now be created!
 
-.. _run_script_with_uv:
+.. _run_script_with_virtual_environment:
 
-Run script with *uv*
-~~~~~~~~~~~~~~~~~~~~
+Run script with virtual environment
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
-
-
-
-
-
-3. Run your scripts with uv
----------------------------
-
-Once your project is set, you can run any scripts from system terminal inside the project folder with **arrLP** dependency using a simple command:
+Once your project virtual environment is set, to run a script *my_script.py* from a fresh system terminal you need to activate the *.venv* and run your script inside.
+*uv* gives a single command for that:
 
 .. code-block:: shell
 
    uv run my_script.py
 
-For more information on script dependencies with uv, please refer to their `script guide <https://docs.astral.sh/uv/guides/scripts/>`_.
+The advantage using this command is that it always calls ``uv sync`` under the hood, so if the virtual environment is not set, or is not up to date, it will be created automatically. 
+For more information on script dependencies, please refer to the `*uv* script <https://docs.astral.sh/uv/guides/scripts/>`_ website.
 
-Some scripts may be provided with the library :doc:`(see Reference Guide) <scripts>`.
-To use them, you can just download them from the `GitHub repository <https://github.com/LancelotPincet/arrLP/tree/main/src/arrlp/scripts>`_.
+In practice, Python scripts are often launched from an editor.
+The complicated part is to use the virtual environment we previously created with these editors.
+In the following tabs are the protocoles for most commonly used editors.
 
-4. Run your script from an editor
----------------------------------
+.. tabs::
 
-In practice, python scripts are often launched from an editor. Here are the following protocoles for most commonly used editors.
+   .. tab:: Visual Studio Code
+      The console in **Visual Studio Code** (or any wrapper editor like **Cursor**) is a system terminal, so if you installed *uv* as suggested, you can just use :
+   
+      ```shell
+      uv run my_script.py
+      ```
 
-Visual Studio Code
-~~~~~~~~~~~~~~~~~~
+      **Visual Studio Code** also proposes a *Python extension* to give the ability to run scripts via a button (IPython under the hood).
 
-The console in **Visual Studio Code** (or any wrapper editor like **Cursor**) is a system terminal, so if you installed *uv* as suggested, you can just use :
+      If you use this button, be aware that the *.venv* environment needs to be activated.
+      If you opened **Visual Studio Code** in the *.venv* parent folder, it should auto-activate if the feature is enabled (by default the setting is ON).
+      If you want to activate it manually: 
+         1. Press **Ctrl + Shift + P** (Linux and Windows) or **Cmd + Shift + P** (macOS)
+         2. Run: `Python: Select Interpreter`
+         3. Choose the interpreter inside your venv, usually shown as:
+         .. code-block:: bash
+            ./.venv/bin/python       (Linux/Mac)
+            ./.venv/Scripts/python.exe (Windows)
+         4. Open new terminal window
+      
+   .. tab:: Anaconda tools (Spyder Jupyter)
+      If you are using *Anaconda*, you probably are coding via *Spyder* and *Jupyter*.
+      By default, these use the *base* environment of *Anaconda*, so when you launch them the virtual environment we created will not be active.
+      To be able to use another virtual environment, *Spyder* and *Jupyter* connects to specific kernels, respectively *spyder-kernels* and *ipykernel*, which are included in **arrLP** library dependencies.
+      
+      To activate the virtual environment manually inside the GUIs:
+         - Spyder: ``Preferences → Python Interpreter``
+         - Jupyter: ``Kernel → Change Kernel``
+      ... and choose the interpreter inside your venv, usually shown as:
+      .. code-block:: bash
+         ./.venv/bin/python       (Linux/Mac)
+         ./.venv/Scripts/python.exe (Windows)
 
-.. code-block:: shell
+   .. tab:: Other editors
+      As other editors have not been tested, please refer to dedicated support to run scripts from virtual environments with these.
 
-   uv run my_script.py
+To finish, some scripts may be provided with the library **arrLP** :doc:`(see Reference Guide) <scripts>`.
+To use them, you can just download source codes from the `GitHub repository <https://github.com/LancelotPincet/arrLP/tree/main/src/arrlp/scripts>`_.
 
-**Visual Studio Code** also proposes a *Python extension* to give the ability to run scripts via a button (IPython under the hood).
-If you use this button, do not forget to activate the *.venv* environment created (it may activate automatically if you run from project path, but this is not very consistent).
-To manually activate : ``Ctrl+Shift+P → Python: Select Interpreter`` and select ``./.venv/Scripts/python.exe``
+.. _create_project_without_uv:
 
-Anaconda tools (Spyder and Jupyter)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Create project without *uv*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If you are using *Anaconda*, you probably are coding via *Spyder* and *Jupyter*. By default, these use the *root environment* of Anaconda with lots of packages pre-included (but not *arrLP*!).
+If you do not like *uv* or are used to other tools, you can explore other possibilities to create your projects by using the dropdown menus bellow.
 
-The **first option** is to manually launch a kernel with the *.venv* we created before on your *Anaconda Spyder/Jupyter*.
+.. dropdown:: Using *Anaconda* distribution
+   :icon: chevron-down
+   
+   *Anaconda* is a Python distribution designed for scientific programming.
 
-- Spyder: ``Preferences → Python Interpreter`` and select ``./.venv/Scripts/python.exe``
-- Jupyter: ``ipykernel`` must be installed in *.venv* (``uv add jupyter ipykernel``), then ``Kernel → Change Kernel``
-This first option can be tedious every day.
+   To install *Anaconda*, you can:
+      - Use an installer corresponding to your OS. If you go directly on `their archive website <https://repo.anaconda.com/>`_, you will not need to create an account to download the installer, which is the "forced way" if you follow the classic procedure from their `homepage <https://www.anaconda.com/download>`_
+      - Use a command corresponding to your OS described in their `documentation <https://www.anaconda.com/docs/getting-started/anaconda/install>`_
+   By default in Windows, *Anaconda* is not added to the *PATH*, so ``conda`` commands will not work in the system terminal, for these use the *Anaconda prompt* provided with the distribution.
 
-The **second option** is to install Spyder and Jupyter in the *.venv*.
+   In *Anaconda*, virtual environments are not stored in the project folder, but in the *anaconda3* folder.
+   The philosophy is not to have one virtual environment per project, but to have several projects with same non-conflicting dependencies sharing a global virtual environment.
+   That is why *Anaconda* does not provide tools to initialize projects.
+   Here we will explain how to setup up virtual environments dependent on **arrLP** that you will be able to use on various projects.
 
-.. code-block:: shell
+   By default, you will have a *base* virtual environment where all the classical scientific libraries are already installed.
+   This is the virtual environment use by default by the tools from Anaconda like *Spyder* or *Jupyter Lab*.
+   However some dependencies for this Python project might not be available in this *base* environment, like **arrLP**.
+   You could manually add these but **this is not recommended** as it will pollute your *base* environment for your other projects and might at some point create dependencies conflicts.
 
-   uv add jupyter ipykernel
-   uv add spyder
+   Best practice is to create a new virtual environment and work dependencies inside.
+   Use these commands in the *Anaconda prompt* to set up a virtual environment :
+      - create venv: ``conda create -n venv_arrLP python``
+      - activate venv: ``conda activate venv_arrLP``
+      - update pip: ``conda install pip``
+      - add *Spyder* and *Jupyter* kernels: ``conda install spyder-kernels ipykernel``
+      - install **arrLP**: ``pip install arrlp``
+      - ...for all other dependencies: ``conda install my_dependency_name` or `pip install my_dependency_name``
 
-Then you can call these in a terminal to open directly the softwares with the *.venv*
-However installing *Spyder* with *uv* (= *pip* installation) can sometimes be difficult with dependencies.
+   Now that the venv is ready in your anaconda3 folder, to run a script from a freshly opened terminal:
+   .. code-block:: bash
+      conda activate venv_arrLP
+      python full/path/to/my_script.py
 
-Other editors
-~~~~~~~~~~~~~
+   Then you can deactivate the virtual environment if needed with ``conda deactivate``
 
-As other editors have not been tested, please refer to dedicated support to run scripts from virtual environments with these.
+   You can also use *Spyder* or *Jupyter* to run scripts with a virtual environment like it was explained `above <_run_script_with_virtual_environment>`_ 
 
-5. Get source code
+.. dropdown:: Manual project
+   :icon: chevron-down
+       
+   If you do not want to use any external tool and have lots of patience, you can do each step manually.
+      1. Install Python from the [website](https://www.python.org/downloads/)
+      2. Create a new project folder
+      3. For good practices, you can add *README.md* and *pyproject.toml* files manually
+      4. Create a virtual environment inside the project folder from terminal: ``python -m venv .venv``
+      5. Activate the virtual environment: ``.\.venv\Scripts\Activate.ps1`` in Windows, ``source .venv/bin/activate `` in Linux/macOS
+      6. Install **arrLP** from terminal: ``pip install arrlp``
+      7. Install with pip all the other dependencies by hand: ``pip install mydependency==myversion``
+   With these, the project folder should be initialized with a virtual environment.
+
+   Then to launch a script from a fresh terminal:
+      - Activate the virtual environment: ``.\.venv\Scripts\Activate.ps1`` in Windows, ``source .venv/bin/activate`` in Linux/macOS
+      - Run script: ``python full/path/to/my_script.py``
+
+.. _get_source_code:
+
+3. Get source code
 ------------------
 
-If you want to use the source code locally to modify the library, you can `git clone` the `GitHub source code <https://github.com/LancelotPincet/arrLP>`_.
+If ever you want to play with the library source code, to apply your own modifications, or even to contribute, you can access it on the `GitHub page <https://github.com/LancelotPincet/arrLP>`_.
+You could download the project directly from the website, but this is **not recommended** as you will not be able to follow various versions of the project, and your modifications will be incompatible with these.
+It is recommended to take the habit of using *git*.
 
-First you need to have `git <https://git-scm.com/downloads>`_ installed on your computer. 
-Go to the local directory where you want to save the repository (change ``PATH_TO_REPO_PARENT``):
+.. dropdown:: If *git* is not installed (or you are unsure)
+   :icon: chevron-down
+   
+   .. _install_git:
+   
+   Install *git*
+   ~~~~~~~~~~~~~
+   
+   To check if *git* is installed, you can try the following command.
+   If it gives you a version, than *git* is already installed!
+   
+   .. code-block:: shell
+   
+      git --version
+   
+   If it fails, you need to install *git*.
+   
+   .. tabs::
+   
+      .. tab:: Linux
+         *git* is often installed by default in Linux.
+         If it is not the cas, use one of following the command corresponding to your distro:
+         - **Debian** and **Ubuntu**: ``sudo apt update && sudo apt install git -y``
+         - **Fedora**: ``sudo dnf install git -y``
+         - **Arch Linux** and **Manjaro**: ``sudo pacman -S git --noconfirm``
+   
+         If you want to install *git* using standalone installers or other methods, please refer to their `installation website <https://git-scm.com/install/linux>`_
+   
+      .. tab:: Windows
+         I recommand using a package manager for the installation. You can use one the following:
+         - `**WinGet** <https://winstall.app/>`_: ``winget install --id Git.Git -e --source winget``
+         - `**Scoop** <https://scoop.sh/>`_: ``scoop install git``
+         - `**Chocolatey** <https://chocolatey.org/install>`_: ``choco install git``
+   
+         If you want to install *git* using standalone installers or other methods, please refer to their `installation website <https://git-scm.com/install/windows>`_
+   
+      .. tab:: macOS
+         I recommand using a package manager for the installation. You can use one the following:
+         - `**Homebrew** <https://brew.sh/>`_: ``brew install git``
+         - **Xcode**: ``xcode-select --install``
+         - `**MacPorts** <https://www.macports.org/install.php>`_: ``sudo port selfupdate && sudo port install git``
+   
+         If you want to install *git* using standalone installers or other methods, please refer to their `installation website <https://git-scm.com/install/mac>`_
+   
+   Now *git* should be installed on your macOS machine!
 
+.. _clone_library_with_git:
+
+Clone library with *git*
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+First, you need to configure your *git* global parameters by filling your name and adress email:*
 .. code-block:: shell
+   git config --global user.name "Your Name"
+   git config --global user.email "youremail@example.com"
 
-   cd PATH_TO_REPO_PARENT
-
-Then clone the repository:
-
+Now, you can clone in your current directory the `GitHub repository <https://github.com/LancelotPincet/arrLP>`_ with the following command
 .. code-block:: shell
-
    git clone https://github.com/LancelotPincet/arrLP.git
 
-Now the library source code should be present
-
+The project source code should then be present in your local folder.
 If you want to contribute, you can do a pull-request in the GitHub repository.
