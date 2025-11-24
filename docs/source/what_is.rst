@@ -1,22 +1,25 @@
+.. _what_is_this_library:
+
 What is this library?
 =====================
 
-**arrLP** is a library written by **Lancelot PINCET**.
-The source code can be consulted on its `GitHub repository <https://github.com/LancelotPincet/arrLP>`_.
-However for simply using the features, you can install it in your Python environment using `pip <https://pypi.org/project/arrLP>`_.
-And for information, do not hesitate to consult the `documentation <https://arrLP.readthedocs.io>`_.
+In this section, we will describe what is **arrLP**. First, we will explain the context behind the problematics that motivated its development. Then, we will explore the strategies used in the solutions proposed. Finally, we will discuss what are your rights when using this open-source Python library in your projects.
 
-**arrLP: A library providing custom functions for arrays.**
+.. _context_and_motivations:
 
 1. Context and motivations
 --------------------------
 
 TODO
 
-2. Proposed solution
---------------------
+.. _propsed_solutions:
+
+2. Proposed solutions
+---------------------
 
 TODO
+
+.. _mit_license:
 
 3. MIT License
 --------------

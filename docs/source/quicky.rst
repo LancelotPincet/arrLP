@@ -1,11 +1,15 @@
+.. _quick_start:
+
 Quick start
 ===========
 
 To get a first grasp of **arrLP**, you will need to know a bit of Python.
 For a refresher, see the `Python tutorial <https://docs.python.org/3/tutorial/>`_.
 
-1. Imports
-----------
+.. _basics:
+
+1. Basics
+---------
 
 To import ``arrLP``, just use :
 
@@ -13,16 +17,15 @@ To import ``arrLP``, just use :
 
    import arrlp
 
-2. Basics
----------
-
 TODO
 
 .. code-block:: python
 
    # TODO
 
-3. Simple example
+.. _simple_example:
+
+2. Simple example
 -----------------
 
 TODO
@@ -32,7 +35,9 @@ TODO
     import arrlp
     # TODO
 
-4. Getting help
+.. _getting_help:
+
+3. Getting help
 ---------------
 
 If you encounter problems or have questions:
