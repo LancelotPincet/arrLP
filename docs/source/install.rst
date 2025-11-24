@@ -71,7 +71,7 @@ To learn more about available commands and their options, refer to online docume
 
       >>> _
 
-   To launch a Python interpreter in the terminal and get the same behavior as your Python editors, you need to have Python installed on your machine and write `python` to open the interpreter.
+   To launch a Python interpreter in the terminal and get the same behavior as your Python editors, you need to have Python installed on your machine and write ``python`` to open the interpreter.
 
 .. _navigation_commands:
 
