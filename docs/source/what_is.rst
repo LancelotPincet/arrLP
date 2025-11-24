@@ -5,7 +5,7 @@ What is this library?
 
 In this section, we will describe what is **arrLP**.
 
-1. First, we will explain the :ref:`context <context_and_motications>` behind the problematics that motivated its development.
+1. First, we will explain the :ref:`context <context_and_motivations>` behind the problematics that motivated its development.
 2. Then, we will explore the strategies used in the :ref:`solutions proposed <proposed_solutions>`.
 3. Finally, we will discuss what are :ref:`your rights <mit_license>` when using this open-source Python library in your projects.
 

@@ -1,3 +1,5 @@
+:orphan:
+
 .. _reference_guide:
 
 Reference guide

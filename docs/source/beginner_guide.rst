@@ -1,3 +1,5 @@
+:orphan:
+
 .. _beginner_guide:
 
 Beginner guide
