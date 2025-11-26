@@ -1,3 +1,5 @@
+:orphan:
+
 .. _what_is_this_library:
 
 What is this library?

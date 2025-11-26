@@ -30,6 +30,7 @@ exclude_patterns = []
 
 # Build
 html_theme = 'sphinx_rtd_theme'
+suppress_warnings = ['toc.excluded', 'toc.dupe']
 
 # -----------------------------
 # PDF / LaTeX styling
@@ -57,9 +58,9 @@ latex_elements = {
 % Fonts
 % -----------------------------
 \usepackage{fontspec}
-\setmainfont{TeXGyreTermes}   % serif font for body
-\setsansfont{TeXGyreHeros}    % sans-serif like RTD
-\setmonofont{Fira Code}         % monospace for code
+\setmainfont{TeX Gyre Termes} % serif font for body
+\setsansfont{TeX Gyre Heros} % sans-serif like RTD
+\setmonofont{Fira Code}[Contextuals=Alternate,Scale=MatchLowercase,FakeSlant=0.2]
 
 \usepackage{setspace}
 \onehalfspacing
@@ -100,16 +101,11 @@ latex_elements = {
 }
 
 % Map Sphinx admonitions to tcolorbox
-\let\oldnote\note
-\renewcommand{\note}[1]{\begin{notebox}#1\end{notebox}}
-\let\oldwarning\warning
-\renewcommand{\warning}[1]{\begin{warningbox}#1\end{warningbox}}
-\let\oldtip\tip
-\renewcommand{\tip}[1]{\begin{tipbox}#1\end{tipbox}}
-\let\oldimportant\important
-\renewcommand{\important}[1]{\begin{importantbox}#1\end{importantbox}}
-\let\oldcaution\caution
-\renewcommand{\caution}[1]{\begin{cautionbox}#1\end{cautionbox}}
+\renewenvironment{sphinxnote}{\begin{notebox}}{\end{notebox}}
+\renewenvironment{sphinxwarning}{\begin{warningbox}}{\end{warningbox}}
+\renewenvironment{sphinxtip}{\begin{tipbox}}{\end{tipbox}}
+\renewenvironment{sphinximportant}{\begin{importantbox}}{\end{importantbox}}
+\renewenvironment{sphinxcaution}{\begin{cautionbox}}{\end{cautionbox}}
 
 % -----------------------------
 % Code block styling
@@ -127,14 +123,6 @@ latex_elements = {
   frameround=tttt,
   backgroundcolor=\color{gray!5},
 }
-
-% -----------------------------
-% Section headers
-% -----------------------------
-\usepackage{titlesec}
-\titleformat{\section}{\large\bfseries}{\thesection}{1em}{}
-\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{}
-\titleformat{\subsubsection}{\normalsize\bfseries}{\thesubsubsection}{1em}{}
 ''',
 }
 

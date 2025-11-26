@@ -1,3 +1,5 @@
+:orphan:
+
 .. _concepts:
 
 Concepts
