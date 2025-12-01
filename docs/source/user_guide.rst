@@ -5,7 +5,7 @@
 User guide
 ==========
 
-Want a deeper understanding of key concepts in **template_name**?
+Want a deeper understanding of key concepts in **arrLP**?
 Dive into the **User Guide** to get an in-depth understanding of the tool.
 
 .. toctree::
