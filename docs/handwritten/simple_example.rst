@@ -2,5 +2,5 @@ TODO
 
 .. code-block:: python
 
-    import arrlp
+    import template_lowername
     # TODO

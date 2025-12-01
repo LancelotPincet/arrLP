@@ -5,7 +5,7 @@
 Beginner guide
 ==============
 
-New to **arrLP**?
+New to **template_name**?
 Check out the **Beginner Guide** to get up and running.
 
 .. toctree::

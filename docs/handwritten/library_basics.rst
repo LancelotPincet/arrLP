@@ -1,10 +1,10 @@
 TODO
 
-To import ``arrLP``, just use :
+To import ``template_name``, just use :
 
 .. code-block:: python
 
-   import arrlp
+   import template_lowername
 
 .. code-block:: python
 
