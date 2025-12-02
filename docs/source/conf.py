@@ -61,6 +61,7 @@ latex_elements = {
 \setmainfont{TeX Gyre Termes} % serif font for body
 \setsansfont{TeX Gyre Heros} % sans-serif like RTD
 \setmonofont{Fira Code}[Contextuals=Alternate,Scale=MatchLowercase,FakeSlant=0.2]
+\setlength{\headheight}{14pt}
 
 \usepackage{setspace}
 \onehalfspacing
