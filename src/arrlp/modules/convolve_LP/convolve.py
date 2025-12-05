@@ -54,7 +54,7 @@ def convolve(arr, k=None, /, out=None, **kwargs) :
     '''
 
     if k is not None :
-        for dim in len(np.shape(k)) :
+        for dim in range(np.ndim(k)) :
             k = np.flip(k, axis=dim)
     return correlate(arr, k, out, **kwargs)
     
