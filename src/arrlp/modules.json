@@ -34,5 +34,11 @@
         "description": "This function redefines a label array to fill potential holes inside.",
         "module": "modules/relabel_LP/relabel",
         "object": "relabel"
+    },
+    "xp": {
+        "date": "2025-12-13",
+        "description": "Use as a decorator for hybrid function numpy/cupy (CPU/GPU), inside the function, \"xp\" will correspond to np/cp.",
+        "module": "modules/xp_LP/xp",
+        "object": "xp"
     }
 }
