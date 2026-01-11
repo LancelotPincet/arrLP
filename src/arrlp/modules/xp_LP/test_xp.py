@@ -15,7 +15,7 @@ xp : Use as a decorator for hybrid function numpy/cupy (CPU/GPU), inside the fun
 
 
 # %% Libraries
-from corelp import print, debug
+from corelp import debug
 import pytest
 import numpy as np
 try:

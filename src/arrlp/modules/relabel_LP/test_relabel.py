@@ -15,7 +15,7 @@ relabel : This function redefines a label array to fill potential holes inside.
 
 
 # %% Libraries
-from corelp import print, debug
+from corelp import debug
 import pytest
 from arrlp import relabel
 debug_folder = debug(__file__)

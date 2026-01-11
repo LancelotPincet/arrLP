@@ -15,7 +15,7 @@ compress : Compresses an array between values by normalizing, with possibility t
 
 
 # %% Libraries
-from corelp import print, debug
+from corelp import debug
 import pytest
 from arrlp import compress
 debug_folder = debug(__file__)
