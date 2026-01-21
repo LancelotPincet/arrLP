@@ -11,10 +11,10 @@ Here are the references to the various modules to import in **arrLP**.
    :maxdepth: 1
    :caption: Modules
 
-   compress
+   relabel
+   kernel
    convolve
    coordinates
+   compress
    correlate
-   kernel
-   relabel
    xp
