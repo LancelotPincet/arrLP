@@ -11,7 +11,7 @@ A library providing custom functions for arrays.
 
 
 
-# %% Source code
+# %% Source import
 sources = {
 'compress': 'arrlp.modules.compress_LP.compress',
 'convolve': 'arrlp.modules.convolve_LP.convolve',
@@ -21,6 +21,18 @@ sources = {
 'relabel': 'arrlp.modules.relabel_LP.relabel',
 'xp': 'arrlp.modules.xp_LP.xp'
 }
+
+
+
+# %% Hidden imports
+if False :
+    import arrlp.modules.compress_LP.compress
+    import arrlp.modules.convolve_LP.convolve
+    import arrlp.modules.coordinates_LP.coordinates
+    import arrlp.modules.correlate_LP.correlate
+    import arrlp.modules.kernel_LP.kernel
+    import arrlp.modules.relabel_LP.relabel
+    import arrlp.modules.xp_LP.xp
 
 
 
