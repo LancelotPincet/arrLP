@@ -22,7 +22,13 @@ sources = {
 'xp': 'arrlp.modules.xp_LP.xp'
 }
 
+from importlib import resources
+from contextlib import contextmanager
 
+@contextmanager
+def resources_dir():
+    with resources.as_file(resources.files("arrlp.resources")) as path:
+        yield path
 
 # %% Hidden imports
 if False :
