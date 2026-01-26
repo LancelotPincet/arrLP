@@ -1,4 +1,4 @@
-arrlp.correlate module
-======================
+template_lowername.correlate module
+template_equals=================
 
-.. autofunction:: arrlp.correlate
+.. autofunction:: template_lowername.correlate

@@ -1,4 +1,4 @@
-arrlp.relabel module
-====================
+template_lowername.relabel module
+template_equals===============
 
-.. autofunction:: arrlp.relabel
+.. autofunction:: template_lowername.relabel

@@ -1,4 +1,4 @@
-arrlp.xp module
-===============
+template_lowername.xp module
+template_equals==========
 
-.. autofunction:: arrlp.xp
+.. autofunction:: template_lowername.xp

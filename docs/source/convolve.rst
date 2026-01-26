@@ -1,4 +1,4 @@
-arrlp.convolve module
-=====================
+template_lowername.convolve module
+template_equals================
 
-.. autofunction:: arrlp.convolve
+.. autofunction:: template_lowername.convolve
