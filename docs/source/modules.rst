@@ -12,9 +12,9 @@ Here are the references to the various modules to import in **arrLP**.
    :caption: Modules
 
    relabel
-   xp
-   compress
    kernel
-   correlate
-   coordinates
    convolve
+   coordinates
+   compress
+   correlate
+   xp
