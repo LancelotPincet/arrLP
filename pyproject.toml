@@ -1,6 +1,6 @@
 [project]
 name = "arrlp"
-version = "0.1.16"
+version = "0.1.17"
 description = "A library that provides tools for arrays on CPU & GPU [any shape]."
 readme = "README.md"
 requires-python = ">=3.12"
