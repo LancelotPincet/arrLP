@@ -4,12 +4,12 @@
 # Author        : Lancelot PINCET
 # GitHub        : https://github.com/LancelotPincet
 # Library       : template_[library]
-# Module        : xp
+# Module        : parallel_array
 
 """
-This file allows to test xp
+This file allows to test parallel_array
 
-xp : Gets numpy or cupy depending on the value of cuda argument.
+parallel_array : Applies a function in parallel on stacks and channels dimensions.
 """
 
 
@@ -17,7 +17,7 @@ xp : Gets numpy or cupy depending on the value of cuda argument.
 # %% Libraries
 from corelp import print, debug
 import pytest
-from template_[lowerlib] import xp
+from template_[lowerlib] import parallel_array
 debug_folder = debug(__file__)
 
 
@@ -25,7 +25,7 @@ debug_folder = debug(__file__)
 # %% Function test
 def test_function() :
     '''
-    Test xp function
+    Test parallel_array function
     '''
     print('Hello world!')
 
@@ -37,7 +37,7 @@ def instance() :
     '''
     Create a new instance at each test function
     '''
-    return xp()
+    return parallel_array()
 
 def test_instance(instance) :
     '''
@@ -53,9 +53,9 @@ def test_instance(instance) :
 ])
 def test_returns(args, kwargs, expected, message) :
     '''
-    Test xp return values
+    Test parallel_array return values
     '''
-    assert xp(*args, **kwargs) == expected, message
+    assert parallel_array(*args, **kwargs) == expected, message
 
 
 
@@ -66,10 +66,10 @@ def test_returns(args, kwargs, expected, message) :
 ])
 def test_errors(args, kwargs, error, error_message) :
     '''
-    Test xp error values
+    Test parallel_array error values
     '''
     with pytest.raises(error, match=error_message) :
-        xp(*args, **kwargs)
+        parallel_array(*args, **kwargs)
 
 
 

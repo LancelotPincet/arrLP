@@ -6,20 +6,27 @@
 # Library       : arrLP
 
 """
-A library providing custom functions for arrays.
+A library that provides tools for arrays on CPU & GPU [any shape].
 """
 
 
 
 # %% Source import
 sources = {
+'axes': 'arrlp.modules.axes_LP.axes',
 'compress': 'arrlp.modules.compress_LP.compress',
-'convolve': 'arrlp.modules.convolve_LP.convolve',
 'coordinates': 'arrlp.modules.coordinates_LP.coordinates',
-'correlate': 'arrlp.modules.correlate_LP.correlate',
+'image': 'arrlp.modules.image_LP.image',
 'kernel': 'arrlp.modules.kernel_LP.kernel',
-'relabel': 'arrlp.modules.relabel_LP.relabel',
-'xp': 'arrlp.modules.xp_LP.xp'
+'ndimage': 'arrlp.modules.ndimage_LP.ndimage',
+'parallel_array': 'arrlp.modules.parallel_array_LP.parallel_array',
+'signal': 'arrlp.modules.signal_LP.signal',
+'volume': 'arrlp.modules.volume_LP.volume',
+'xp': 'arrlp.modules.xp_LP.xp',
+'img_wiener': 'arrlp.modules.image_LP._functions.img_wiener',
+'img_correlate': 'arrlp.modules.image_LP._functions.img_correlate',
+'img_fft': 'arrlp.modules.image_LP._functions.img_fft',
+'img_ifft': 'arrlp.modules.image_LP._functions.img_ifft'
 }
 
 

@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Date          : 2026-02-09
+# Date          : 2026-02-10
 # Author        : Lancelot PINCET
 # GitHub        : https://github.com/LancelotPincet
 # Library       : template_[library]
-# Module        : xp
+# Module        : ndimage
 
 """
-This file allows to test xp
+This file allows to test ndimage
 
-xp : Gets numpy or cupy depending on the value of cuda argument.
+ndimage : Gets scipy.ndimage of cupyx.scipy.ndimage depending on the value of cuda argument.
 """
 
 
@@ -17,7 +17,7 @@ xp : Gets numpy or cupy depending on the value of cuda argument.
 # %% Libraries
 from corelp import print, debug
 import pytest
-from template_[lowerlib] import xp
+from template_[lowerlib] import ndimage
 debug_folder = debug(__file__)
 
 
@@ -25,7 +25,7 @@ debug_folder = debug(__file__)
 # %% Function test
 def test_function() :
     '''
-    Test xp function
+    Test ndimage function
     '''
     print('Hello world!')
 
@@ -37,7 +37,7 @@ def instance() :
     '''
     Create a new instance at each test function
     '''
-    return xp()
+    return ndimage()
 
 def test_instance(instance) :
     '''
@@ -53,9 +53,9 @@ def test_instance(instance) :
 ])
 def test_returns(args, kwargs, expected, message) :
     '''
-    Test xp return values
+    Test ndimage return values
     '''
-    assert xp(*args, **kwargs) == expected, message
+    assert ndimage(*args, **kwargs) == expected, message
 
 
 
@@ -66,10 +66,10 @@ def test_returns(args, kwargs, expected, message) :
 ])
 def test_errors(args, kwargs, error, error_message) :
     '''
-    Test xp error values
+    Test ndimage error values
     '''
     with pytest.raises(error, match=error_message) :
-        xp(*args, **kwargs)
+        ndimage(*args, **kwargs)
 
 
 

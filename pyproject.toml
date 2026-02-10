@@ -1,10 +1,10 @@
 [project]
 name = "arrlp"
 version = "0.1.16"
-description = "A library providing custom functions for arrays."
+description = "A library that provides tools for arrays on CPU & GPU [any shape]."
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = [ "astropy", "corelp", "numba", "numpy", "scipy",]
+dependencies = [ "corelp", "joblib", "numba", "numpy", "scipy",]
 
 [build-system]
 requires = [ "uv_build",]
@@ -14,6 +14,11 @@ build-backend = "uv_build"
 tests = [ "pytest",]
 docs = [ "sphinx", "sphinx-design", "sphinx-rtd-theme", "toml",]
 anaconda = [ "ipykernel", "spyder-kernels",]
+
+[project.optional-dependencies]
+cuda11 = [ "cupy-cuda11x",]
+cuda12 = [ "cupy-cuda12x",]
+cuda13 = [ "cupy-cuda13x",]
 
 [tool.uv]
 required-environments = [ "sys_platform == 'linux' and platform_machine == 'x86_64'", "sys_platform == 'win32' and (platform_machine == 'AMD64' or platform_machine == 'x86_64')",]

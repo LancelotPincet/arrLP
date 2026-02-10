@@ -14,11 +14,12 @@ This function will return a ndarray corresponding to the coordinates array of th
 
 # %% Libraries
 import numpy as np
+from arrlp import xp
 
 
 
 # %% Function
-def coordinates(shape, pixel=1., *, ndims=1, center=True, grid=False, origin=0.) :
+def coordinates(shape, pixel=1., *, ndims=1, center=True, grid=False, origin=0., cuda=False) :
     '''
     This function will return a ndarray corresponding to the coordinates array of the input.
     
@@ -28,7 +29,6 @@ def coordinates(shape, pixel=1., *, ndims=1, center=True, grid=False, origin=0.)
         Describes the shape of the coordinates.
         If int, all dimensions will have this value.
         If tuple, corresponds to the shape.
-        If array, will take the shape attribute of the array
     pixel : float, tuple(float)
         Says what is the size of one bin, default is 1.
         If tuple, corresponds to the pixel for each dimension.
@@ -43,6 +43,8 @@ def coordinates(shape, pixel=1., *, ndims=1, center=True, grid=False, origin=0.)
     origin : float or tuple(float)
         Value of origin (default 0).
         If tuple, value for each dimension.
+    cuda : bool
+        True to apply cuda.
 
     Returns
     -------
@@ -63,6 +65,7 @@ def coordinates(shape, pixel=1., *, ndims=1, center=True, grid=False, origin=0.)
     >>> coordinates = coordinates(array, pixel=10, center=(True, False), grid=False, origin=(0,3))
     ... array([[-20.], [-10.], [0.], [10.], [20.]]), array([[3., 13., 23., 33.]])
     '''
+    _xp = xp(cuda)
 
     # Manage shape argument
     if isinstance(shape, int) :
@@ -70,7 +73,7 @@ def coordinates(shape, pixel=1., *, ndims=1, center=True, grid=False, origin=0.)
     elif isinstance(shape, tuple) :
         pass
     else :
-        shape = np.shape(shape)
+        shape = shape.shape
 
     # Correct ndims
     ndims = len(shape)
@@ -83,7 +86,7 @@ def coordinates(shape, pixel=1., *, ndims=1, center=True, grid=False, origin=0.)
     #looping on shape
     coords = []
     for dim, (n, pix, cent, orig) in enumerate(zip(shape, pixel, center, origin)) :
-        coord = n2coord(n, pixel=pix, center=cent, origin=orig)
+        coord = n2coord(n, pixel=pix, center=cent, origin=orig, xp=_xp)
         reshape = np.ones(ndims, dtype=int)
         reshape[dim] = len(coord)
         coord = coord.reshape(tuple(reshape))
@@ -93,7 +96,7 @@ def coordinates(shape, pixel=1., *, ndims=1, center=True, grid=False, origin=0.)
     if ndims == 1 :
         return coords[0]
     elif grid :
-        return np.meshgrid(*coords, indexing='ij')
+        return _xp.meshgrid(*coords, indexing='ij')
     else :
         return coords
 
@@ -110,12 +113,12 @@ def iterable(arg, ndims) :
 
 
 
-def n2coord(n, pixel=1., center=False, origin=0.) :
+def n2coord(n, pixel=1., center=False, origin=0., xp=np) :
     if center :
         start, stop = -(n - 1) / 2,(n - 1) / 2
     else :
-        start,stop = 0, n - 1
-    return np.linspace(start, stop, n) * pixel + origin
+        start, stop = 0, n - 1
+    return xp.linspace(start, stop, n) * pixel + origin
 
 
 

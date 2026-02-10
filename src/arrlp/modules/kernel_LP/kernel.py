@@ -13,14 +13,14 @@ This funtion creates kernels small arrays, mainly for convolutions.
 
 
 # %% Libraries
-from arrlp import coordinates
+from arrlp import coordinates, xp
 import numpy as np
 from scipy.special import erf, erfinv, j1
 
 
 
 # %% Function
-def kernel(ndims=2, pixel=1, *, dtype=np.float32, atrou=0, window=None, sigma=None, wl=None, NA=None) :
+def kernel(ndims=2, pixel=1, *, dtype=np.float32, shape=None, cuda=False, atrou=0, window=None, sigma=None, wl=None, NA=None) :
     '''
     This funtion creates kernels small arrays, mainly for convolutions.
     
@@ -32,6 +32,10 @@ def kernel(ndims=2, pixel=1, *, dtype=np.float32, atrou=0, window=None, sigma=No
         Size of pixel for each dimension.
     dtype : np.dtype
         data type of kernel.
+    shape : tuple
+        shape of kernel.
+    cuda : bool
+        True to apply cuda.
     atrou : int
         Number of trou to put for atrou algorithm, None for normal kernel.
     window : float
@@ -64,11 +68,11 @@ def kernel(ndims=2, pixel=1, *, dtype=np.float32, atrou=0, window=None, sigma=No
 
     #kernel
     if sigma is not None :
-        k = kernel_gaus(sigma, pixel, ndims)
+        k = kernel_gaus(sigma, pixel, ndims, shape)
     elif window is not None :
-        k = kernel_mask(window, pixel, ndims)
+        k = kernel_mask(window, pixel, ndims, shape)
     elif wl is not None and NA is not None :
-        k = kernel_airy(wl, NA, pixel, ndims)
+        k = kernel_airy(wl, NA, pixel, ndims, shape)
     else :
         raise SyntaxError('Kernel was not recognized')
 
@@ -78,18 +82,20 @@ def kernel(ndims=2, pixel=1, *, dtype=np.float32, atrou=0, window=None, sigma=No
 
     k = k.astype(dtype)
     k /= k.sum()
-    return k
+    _xp = xp(cuda)
+    return _xp.asarray(k)
 
 
 
-def kernel_gaus(sigma, pixel=1, ndims=1, tol_zero=1/100) :
+def kernel_gaus(sigma, pixel=1, ndims=1, shape=None, tol_zero=1/100) :
     '''gets a n dimensions gaussian kernel'''
 
     # Coordinates
     sigma = np.asarray(iterable(sigma, ndims))
     pixel = np.asarray(iterable(pixel, ndims))
-    shape = np.ceil(sigma * 6 / pixel)
-    shape = tuple((shape + 1 - shape % 2).astype(int)) #odd number shape
+    if shape is None :
+        shape = np.ceil(sigma * 6 / pixel)
+        shape = tuple((shape + 1 - shape % 2).astype(int)) #odd number shape
     coords = coordinates(shape, center=True, pixel=pixel)
 
     # Apply Gaussian on each dimension and calculates distance from origin in sigmas
@@ -108,14 +114,15 @@ def kernel_gaus(sigma, pixel=1, ndims=1, tol_zero=1/100) :
 
 
 
-def kernel_mask(window, pixel=1, ndims=1) :
+def kernel_mask(window, pixel=1, ndims=1, shape=None) :
     '''gets a n dimensions mask kernel'''
 
     # Coordinates
     window = np.asarray(iterable(window, ndims))
     pixel = np.asarray(iterable(pixel, ndims))
-    shape = np.ceil(window / pixel)
-    shape = tuple((shape + 1 - shape % 2).astype(int)) #odd number shape
+    if shape is None :
+        shape = np.ceil(window / pixel)
+        shape = tuple((shape + 1 - shape % 2).astype(int)) #odd number shape
     coords = coordinates(shape, center=True, pixel=pixel)
 
     # Calculates distance from origin in windows
@@ -131,13 +138,14 @@ def kernel_mask(window, pixel=1, ndims=1) :
 
 
 
-def kernel_airy(wl, NA, pixel=1, ndims=1) :
+def kernel_airy(wl, NA, pixel=1, ndims=1, shape=None) :
     '''gets a n dimensions mask kernel'''
 
     # Coordinates
     pixel = np.asarray(iterable(pixel, ndims))
-    shape = np.ceil((2.44 * wl / NA) / pixel)
-    shape = tuple((shape + 1 - shape % 2).astype(int)) #odd number shape
+    if shape is None :
+        shape = np.ceil((2.44 * wl / NA) / pixel)
+        shape = tuple((shape + 1 - shape % 2).astype(int)) #odd number shape
     coords = coordinates(shape, center=True, pixel=pixel)
 
     # Calculates distance from origin in nm and pixel apply Airy function

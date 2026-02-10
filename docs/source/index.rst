@@ -5,7 +5,7 @@ Documentation
 
 ----
 
-**A library providing custom functions for arrays.**
+**A library that provides tools for arrays on CPU & GPU [any shape].**
 
 .. code-block:: text
 

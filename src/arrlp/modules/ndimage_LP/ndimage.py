@@ -1,39 +1,39 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Date          : 2026-02-09
+# Date          : 2026-02-10
 # Author        : Lancelot PINCET
 # GitHub        : https://github.com/LancelotPincet
 # Library       : arrLP
-# Module        : xp
+# Module        : ndimage
 
 """
-Gets numpy or cupy depending on the value of cuda argument.
+Gets scipy.ndimage of cupyx.scipy.ndimage depending on the value of cuda argument.
 """
 
 
 
 # %% Libraries
-import numpy as np
+import scipy.ndimage as cpu_ndimage
 try:
-    import cupy as cp
+    import cupyx.scipy.ndimage as gpu_ndimage 
 except ImportError:
-    cp = None
+    gpu_ndimage = None
 
 
 
 # %% Function
-def xp(cuda:bool) :
+def ndimage(cuda:bool) :
     '''
-    Gets numpy or cupy depending on the value of cuda argument.
+    Gets scipy.ndimage of cupyx.scipy.ndimage depending on the value of cuda argument.
     
     Parameters
     ----------
     cuda : bool
-        Tells to take numpy or cupy.
+        Tells to take scipy or cupyx.scipy.
 
     Returns
     -------
-    _xp : np or cp
+    _ndimage : scipy.ndimage or cupyx.scipy.ndimage
         Library to use.
 
     Raises
@@ -43,14 +43,14 @@ def xp(cuda:bool) :
 
     Examples
     --------
-    >>> from arrlp import xp
+    >>> from arrlp import ndimage
     ...
-    >>> _xp = xp(cuda)
+    >>> _ndimage = ndimage(cuda)
     '''
 
-    if cuda and cp is None :
+    if cuda and gpu_ndimage is None :
         raise ImportError('Cupy is not available for xp function')
-    return cp if cuda else np
+    return gpu_ndimage if cuda else cpu_ndimage
 
 
 

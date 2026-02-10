@@ -11,10 +11,13 @@ Here are the references to the various modules to import in **arrLP**.
    :maxdepth: 1
    :caption: Modules
 
-   relabel
    kernel
-   convolve
+   axes
+   signal
    coordinates
    compress
-   correlate
+   volume
+   ndimage
+   parallel_array
+   image
    xp

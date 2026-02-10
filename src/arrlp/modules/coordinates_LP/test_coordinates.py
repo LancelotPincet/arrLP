@@ -21,8 +21,6 @@ import numpy as np
 from arrlp import coordinates
 debug_folder = debug(__file__)
 
-print(coordinates())
-
 # %% Returns test
 @pytest.mark.parametrize("args, kwargs, expected, message", [
     #([], {}, None, ""),
