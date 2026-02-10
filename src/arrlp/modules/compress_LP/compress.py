@@ -74,8 +74,8 @@ def compress(array, /, max=1, min=0, *, dtype=None, white=None, black=None, whit
         white = _xp.nanmax(array) if white_percent is None else _xp.nanpercentile(array, 100-white_percent)
     if black is None :
         black = _xp.nanmin(array) if black_percent is None else _xp.nanpercentile(array, black_percent)
-    if white >= black :
-        raise ValueError('white >= black is not possible while compressing')
+    if white <= black :
+        raise ValueError('white <= black is not possible while compressing')
 
     # Normalization
     if max is not None and min is not None and min >= max :
