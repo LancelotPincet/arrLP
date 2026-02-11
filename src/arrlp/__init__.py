@@ -23,10 +23,10 @@ sources = {
 'signal': 'arrlp.modules.signal_LP.signal',
 'volume': 'arrlp.modules.volume_LP.volume',
 'xp': 'arrlp.modules.xp_LP.xp',
+'img_ifft': 'arrlp.modules.image_LP._functions.img_ifft',
 'img_wiener': 'arrlp.modules.image_LP._functions.img_wiener',
-'img_correlate': 'arrlp.modules.image_LP._functions.img_correlate',
 'img_fft': 'arrlp.modules.image_LP._functions.img_fft',
-'img_ifft': 'arrlp.modules.image_LP._functions.img_ifft'
+'img_correlate': 'arrlp.modules.image_LP._functions.img_correlate'
 }
 
 
