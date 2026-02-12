@@ -100,83 +100,21 @@ def img_wiener(array, *,
 
 
 if __name__ == '__main__' :
-
-
-
-    # Imports
-    import numpy as np
-    try :
-        import cupy as cp
-    except ImportError :
-        cp = None
-    from time import perf_counter
-
-
-
-    # Parameter ~2**24 ; 2**8=256
+    from arrlp import debug_array
     func = img_wiener
-    nstacks = int(2**8)
-    shape = (int(2**7), int(2**7))
-    nchannels = int(2**2)
 
+    # Arguments
+    kwargs = dict(
+        pixel=1,
+        sigma=3,
+    )
 
+    # Modes
+    modes = { # list of dicts with kwargs
+        "Reference": dict(cuda=False, parallel=False),
+        "Parallel": dict(cuda=False, parallel=True),
+        "Cuda": dict(cuda=True, parallel=False),
+    }
 
-    # Timeit function
-    def timeit(array, stacks, channels, parallel, cuda) :
+    debug_array(func, modes, **kwargs)
 
-        # Init
-        _xp = xp(cuda)
-        array = _xp.asarray(array)
-
-        # Calculate
-        print(f'\n** Testing stacks={stacks}, channels={channels}, parallel={parallel}, cuda={cuda} **')
-        print('Compile run...')
-        func(array, stacks=stacks, channels=channels, parallel=parallel, cuda=cuda, pixel=1, sigma=3)
-        print('Run...')
-        tic = perf_counter()
-        out = func(array, stacks=stacks, channels=channels, parallel=parallel, cuda=cuda, pixel=1, sigma=3)
-        toc = perf_counter()
-        print(f'...took {(toc-tic)*1000:.3f}ms\n')
-        if cuda : out = _xp.asnumpy(out)
-        return out
-
-
-
-    # Loops
-    optimization = {'None': dict(cuda=False, parallel=False), 'Parallel': dict(cuda=False, parallel=True), 'Cuda': dict(cuda=True, parallel=False)}
-    opti = ["None", "Parallel"] if cp is None else ["None", "Parallel", "Cuda"]
-    for channels in [False, True] :
-        for stacks in [False, True] :
-
-            # Array
-            match stacks, channels :
-                case (True, True) :
-                    _shape = (nstacks, *shape, nchannels)
-                case(True, False) :
-                    _shape = (nstacks, *shape)
-                case(False, True) :
-                    _shape = (*shape, nchannels)
-                case(False, False) :
-                    _shape = shape
-            array = np.random.random(_shape)
-
-            # Calculate
-            results = {}
-            for opt in opti:
-                results[opt] = timeit(array, stacks, channels, **optimization[opt])
-                if not channels and not stacks and opt == "None" :
-                    break
-            
-            # Compare
-            ref = results["None"]
-            for opt, out in results.items():
-                if opt == "None" : continue
-                print(f"Checking correctness vs reference: {opt}")
-                np.testing.assert_allclose(
-                    ref, out,
-                    rtol=1e-4,
-                    atol=1e-5,
-                    err_msg="Outputs differ between optimizations"
-                )
-
-                

@@ -6,7 +6,7 @@
 
 
 # %% Libraries
-from arrlp import xp, axes, parallel_array
+from arrlp import xp, scipyx, ndimage, axes, parallel_array
 
 
 
@@ -32,23 +32,45 @@ def temp(array, *,
         
 
     # Init
+    ndims = 2
     _xp = xp(cuda)
+    _scipyx = scipyx(cuda)
+    _ndimage = ndimage(cuda)
+    _axes = axes(ndims)
     array = _xp.asarray(array)
-    # if out is None: out = _xp.empty_like(array)
+    if out is None: out = _xp.empty_like(array)
 
-    # Function info [update here]
-    func = _xp.TODO
+    # Function info
+    func = lambda array, *args, axes=None, **kwargs : _scipyx.fft.fftshift(_scipyx.fft.fft2(array, *args, axes=axes, workers=-1, **kwargs), axes=axes)
     ndims = 2
     ins = (array,)
     outs = (None,)
 
     # Init
+    nstacks, nchannels = array.shape[0], array.shape[-1]
+    iterator = print.clock if print is not None else range
 
     # Looping on axes
     if cuda or not parallel :
         _axes = axes(ndims, stacks)
         return func(array, axes=_axes, **kwargs) # TODO
     
+        match (stacks, channels) :
+            case (False, False) :
+                func(array, out=out)
+            case (True, False) :
+                for i in iterator(nstacks) :
+                    func(array[i], out=out[i])
+            case (False, True) :
+                for j in iterator(nchannels) :
+                    func(array[..., j], out=out[..., j])
+            case (True, True) :
+                for i in iterator(nstacks) :
+                    a, o = array[i], out[i]
+                    for j in range(nchannels) :
+                        func(a[..., j], out=o[..., j])
+        return out
+
     # Parallel
 
     match (stacks, channels) :
@@ -68,83 +90,18 @@ def temp(array, *,
 
 
 if __name__ == '__main__' :
-
-
-
-    # Imports
-    import numpy as np
-    try :
-        import cupy as cp
-    except ImportError :
-        cp = None
-    from time import perf_counter
-
-
-
-    # Parameter ~2**24 ; 2**8=256
+    from arrlp import debug_array
     func = TODO
-    nstacks = int(2**8)
-    shape = (int(2**7), int(2**7))
-    nchannels = int(2**2)
 
+    # Arguments
+    kwargs = dict(
+    )
 
+    # Modes
+    modes = { # list of dicts with kwargs
+        "Reference": dict(cuda=False, parallel=False),
+        "Parallel": dict(cuda=False, parallel=True),
+        "Cuda": dict(cuda=True, parallel=False),
+    }
 
-    # Timeit function
-    def timeit(array, stacks, channels, parallel, cuda) :
-
-        # Init
-        _xp = xp(cuda)
-        array = _xp.asarray(array)
-
-        # Calculate
-        print(f'\n** Testing stacks={stacks}, channels={channels}, parallel={parallel}, cuda={cuda} **')
-        print('Compile run...')
-        func(array, stacks=stacks, channels=channels, parallel=parallel, cuda=cuda)
-        print('Run...')
-        tic = perf_counter()
-        out = func(array, stacks=stacks, channels=channels, parallel=parallel, cuda=cuda)
-        toc = perf_counter()
-        print(f'...took {(toc-tic)*1000:.3f}ms\n')
-        if cuda : out = _xp.asnumpy(out)
-        return out
-
-
-
-    # Loops
-    optimization = {'None': dict(cuda=False, parallel=False), 'Parallel': dict(cuda=False, parallel=True), 'Cuda': dict(cuda=True, parallel=False)}
-    opti = ["None", "Parallel"] if cp is None else ["None", "Parallel", "Cuda"]
-    for channels in [False, True] :
-        for stacks in [False, True] :
-
-            # Array
-            match stacks, channels :
-                case (True, True) :
-                    _shape = (nstacks, *shape, nchannels)
-                case(True, False) :
-                    _shape = (nstacks, *shape)
-                case(False, True) :
-                    _shape = (*shape, nchannels)
-                case(False, False) :
-                    _shape = shape
-            array = np.random.random(_shape)
-
-            # Calculate
-            results = {}
-            for opt in opti:
-                results[opt] = timeit(array, stacks, channels, **optimization[opt])
-                if not channels and not stacks and opt == "None" :
-                    break
-            
-            # Compare
-            ref = results["None"]
-            for opt, out in results.items():
-                if opt == "None" : continue
-                print(f"Checking correctness vs reference: {opt}")
-                np.testing.assert_allclose(
-                    ref, out,
-                    rtol=1e-4,
-                    atol=1e-5,
-                    err_msg="Outputs differ between optimizations"
-                )
-
-                
+    debug_array(func, modes, **kwargs)

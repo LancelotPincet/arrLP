@@ -11,11 +11,11 @@ from arrlp import xp, scipyx, axes
 
 
 # %% Function
-def sig_fft(array, *,
+def vol_fft(array, *,
         stacks=False, channels=False, parallel=False, cuda=False, print=None,
         **kwargs) :
     '''
-    Fast Fourier Transform on signals.
+    Fast Fourier Transform on volumes.
     '''
 
     # Checks
@@ -23,9 +23,9 @@ def sig_fft(array, *,
         raise ValueError('Normal array (no stack of channel) cannot be calculated in parallel')
     if parallel and cuda :
         raise SyntaxError('Cuda and Parallel cannot be True at the same time')
-    if parallel :
-        import warnings
-        warnings.warn('Parallel optimization is not effective in this function')
+    # if parallel :
+    #    import warnings
+    #    warnings.warn('Parallel optimization is not effective in this function')
     # if cuda :
     #    import warnings
     #    warnings.warn('Cuda optimization is not effective in this function')
@@ -38,15 +38,15 @@ def sig_fft(array, *,
 
     # Function info [update here]
     if parallel :
-        func = lambda array, *args, axes=None, **kwargs : _scipyx.fft.fftshift(_scipyx.fft.fft(array, *args, axis=axes[0], workers=-1, **kwargs), axes=axes)
+        func = lambda array, *args, axes=None, **kwargs : _scipyx.fft.fftshift(_scipyx.fft.fftn(array, *args, axes=axes, workers=-1, **kwargs), axes=axes)
     else :
-        func = lambda array, *args, axes=None, **kwargs : _scipyx.fft.fftshift(_scipyx.fft.fft(array, *args, axis=axes[0], **kwargs), axes=axes)
-    ndims = 1
+        func = lambda array, *args, axes=None, **kwargs : _scipyx.fft.fftshift(_scipyx.fft.fftn(array, *args, axes=axes, **kwargs), axes=axes)
+    ndims = 3
 
     # Looping on axes
     _axes = axes(ndims, stacks)
     return func(array, axes=_axes, **kwargs)
-    
+        
 
 
 
@@ -66,9 +66,9 @@ if __name__ == '__main__' :
 
 
     # Parameter ~2**24 ; 2**8=256
-    func = sig_fft
+    func = vol_fft
     nstacks = int(2**8)
-    shape = (int(2**14),)
+    shape = (int(2**4), int(2**5), int(2**5))
     nchannels = int(2**2)
 
     # Arguments

@@ -1,0 +1,132 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+# Date          : 2026-02-12
+# Author        : Lancelot PINCET
+# GitHub        : https://github.com/LancelotPincet
+# Library       : arrLP
+# Module        : debug_array
+
+"""
+This function allows to debug array functions while comparing various modes.
+"""
+
+
+
+# %% Libraries
+import numpy as np
+try :
+    import cupy as cp
+except ImportError :
+    cp = None
+from time import perf_counter
+from arrlp import xp
+import warnings
+
+
+
+# %% Function
+def debug_array(func, modes, **kwargs) :
+    f'''
+    This function allows to debug array functions while comparing various modes.
+    
+    Parameters
+    ----------
+    func : function
+        function to test.
+    modes : dict
+        dict of dicts corresponding to various modes that should give same results.
+    **kwargs : dict
+        constant keyword arguments.
+
+    Examples
+    --------
+    >>> from arrlp import debug_array
+    ...
+    >>> debug_array(func, ndimes, dict("Normal": dict()))
+    '''
+
+
+
+    # Data size ~2**24
+    nstacks = int(2**8)
+    nchannels = int(2**2)
+    if func.__name__.startswith('sig') :
+        shape = (int(2**14),)
+    if func.__name__.startswith('img') :
+        shape = (int(2**7), int(2**7))
+    if func.__name__.startswith('vol') :
+        shape = (int(2**4), int(2**5), int(2**5))
+
+    # Manage modes
+    modes = {key: value for key, value in modes.items() if cp is not None or not value["cuda"]}
+
+
+
+    # Timeit function
+    def timeit(key, array, stacks, channels, parallel, cuda, **kw) :
+
+        # Init
+        _xp = xp(cuda)
+        array = _xp.asarray(array)
+
+        # Calculate
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            print('Compile run...', end='')
+            func(array, stacks=stacks, channels=channels, parallel=parallel, cuda=cuda, **kwargs, **kw)
+            print('\rRun...        ', end='')
+            tic = perf_counter()
+            out = func(array, stacks=stacks, channels=channels, parallel=parallel, cuda=cuda, **kwargs, **kw)
+            toc = perf_counter()
+            print(f'\r{key} took {(toc-tic)*1000:.3f}ms      ')
+            if cuda : out = _xp.asnumpy(out)
+        return out
+
+
+
+    # Loops
+    for channels in [False, True] :
+        for stacks in [False, True] :
+
+            print(f'\nTesting for stacks={stacks} and channels={channels}')
+
+            # Array
+            match stacks, channels :
+                case (True, True) :
+                    _shape = (nstacks, *shape, nchannels)
+                case(True, False) :
+                    _shape = (nstacks, *shape)
+                case(False, True) :
+                    _shape = (*shape, nchannels)
+                case(False, False) :
+                    _shape = shape
+            array = np.random.random(_shape)
+
+            # Calculate
+            results = {}
+            ref = None
+            for key, value in modes.items():
+                parallel, cuda = value["parallel"], value["cuda"]
+                if (not channels and not stacks) and (parallel or cuda) : continue
+                results[key] = timeit(key, array, stacks, channels, **value)
+                if ref is None :
+                    ref = key
+            
+            # Compare
+            for key, value in results.items():
+                if key == ref : continue
+                print(f"\rChecking correctness vs reference: {key}" + " "*(60-34-len(key)), end='')
+                np.testing.assert_allclose(
+                    results[ref], results[key],
+                    rtol=1e-4,
+                    atol=1e-5,
+                    err_msg="Outputs differ between optimizations"
+                )
+            print('\r'+' '*60+'\n')
+
+
+
+# %% Test function run
+if __name__ == "__main__":
+    from corelp import test
+    test(__file__)

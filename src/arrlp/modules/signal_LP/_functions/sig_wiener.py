@@ -119,10 +119,19 @@ if __name__ == '__main__' :
     shape = (int(2**14),)
     nchannels = int(2**2)
 
+    # Arguments
+    kwargs = dict(
+        pixel=1,
+        sigma=3,
+    )
 
+    # Modes
+    modes = { # list of dicts with kwargs
+        {},
+    }
 
     # Timeit function
-    def timeit(array, stacks, channels, parallel, cuda) :
+    def timeit(array, stacks, channels, parallel, cuda, **kw) :
 
         # Init
         _xp = xp(cuda)
@@ -131,10 +140,10 @@ if __name__ == '__main__' :
         # Calculate
         print(f'\n** Testing stacks={stacks}, channels={channels}, parallel={parallel}, cuda={cuda} **')
         print('Compile run...')
-        func(array, stacks=stacks, channels=channels, parallel=parallel, cuda=cuda, pixel=1, sigma=3)
+        func(array, stacks=stacks, channels=channels, parallel=parallel, cuda=cuda, **kwargs, **kw)
         print('Run...')
         tic = perf_counter()
-        out = func(array, stacks=stacks, channels=channels, parallel=parallel, cuda=cuda, pixel=1, sigma=3)
+        out = func(array, stacks=stacks, channels=channels, parallel=parallel, cuda=cuda, **kwargs, **kw)
         toc = perf_counter()
         print(f'...took {(toc-tic)*1000:.3f}ms\n')
         if cuda : out = _xp.asnumpy(out)
