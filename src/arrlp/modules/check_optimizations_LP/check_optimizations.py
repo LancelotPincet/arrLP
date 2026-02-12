@@ -47,7 +47,7 @@ def check_optimizations(stacks=False, channels=False, parallel=False, cuda=False
     >>> check_optimizations(stacks, channels, parallel, cuda, remove_parallel=False, remove_cuda=False)
     '''
 
-    # Checks
+    # No parallel 
     if parallel and not stacks and not channels :
         raise ValueError('Normal array (no stack of channel) cannot be calculated in parallel')
     if parallel and cuda :
