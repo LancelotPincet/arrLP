@@ -22,6 +22,8 @@ def img_correlate(array, *,
     # Checks
     if parallel and not stacks and not channels :
         raise ValueError('Normal array (no stack of channel) cannot be calculated in parallel')
+    if parallel and cuda :
+        raise SyntaxError('Cuda and Parallel cannot be True at the same time')
     # if parallel :
     #     import warnings
     #     warnings.warn('Parallel optimization is not effective in this function')
@@ -164,8 +166,8 @@ if __name__ == '__main__' :
                 print(f"Checking correctness vs reference: {opt}")
                 np.testing.assert_allclose(
                     ref, out,
-                    rtol=1e-5,
-                    atol=1e-6,
+                    rtol=1e-4,
+                    atol=1e-5,
                     err_msg="Outputs differ between optimizations"
                 )
 

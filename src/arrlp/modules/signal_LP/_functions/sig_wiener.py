@@ -6,17 +6,17 @@
 
 
 # %% Libraries
-from arrlp import xp, parallel_array, img_fft
+from arrlp import xp, parallel_array, sig_fft
 from arrlp import kernel as _kernel
 
 
 
 # %% Function
-def img_wiener(array, *,
+def sig_wiener(array, *,
         stacks=False, channels=False, parallel=False, cuda=False, print=None,
         kernel=None, power=2, balance=10**2, **kernel_kwargs) :
     '''
-    Makes Wiener deconvolution on images.
+    Makes Wiener deconvolution on signals.
     '''
 
     # Checks
@@ -38,7 +38,7 @@ def img_wiener(array, *,
     out = _xp.empty_like(array)
 
     # Function info [update here]
-    ndims = 2
+    ndims = 1
     ins = (array,)
     outs = (out,)
 
@@ -47,14 +47,14 @@ def img_wiener(array, *,
     iterator = print.clock if print is not None else range
 
     # Wiener
-    y, x = array.shape[int(stacks)], array.shape[int(stacks) + 1]
-    if kernel is None : kernel = _kernel(ndims, shape=(y, x), cuda=cuda, **kernel_kwargs)
-    fft_kernel = _xp.abs(img_fft(kernel, cuda=cuda))
+    x = array.shape[int(stacks)]
+    if kernel is None : kernel = _kernel(ndims, shape=(x,), cuda=cuda, **kernel_kwargs)
+    fft_kernel = _xp.abs(sig_fft(kernel, cuda=cuda))
     W = fft_kernel**(power-1) / (fft_kernel**power + fft_kernel.max() / balance)
     def func(array) :
         dtype = array.dtype
-        fft = _xp.fft.fftshift(_xp.fft.fft2(array))
-        return _xp.real(_xp.fft.ifft2(_xp.fft.ifftshift(fft * W))).astype(dtype)
+        fft = _xp.fft.fftshift(_xp.fft.fft(array))
+        return _xp.real(_xp.fft.ifft(_xp.fft.ifftshift(fft * W))).astype(dtype)
 
 
     # Looping on axes
@@ -114,9 +114,9 @@ if __name__ == '__main__' :
 
 
     # Parameter ~2**24 ; 2**8=256
-    func = img_wiener
+    func = sig_wiener
     nstacks = int(2**8)
-    shape = (int(2**7), int(2**7))
+    shape = (int(2**14),)
     nchannels = int(2**2)
 
 

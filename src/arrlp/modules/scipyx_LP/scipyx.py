@@ -13,18 +13,18 @@ Gets scipy.ndimage of cupyx.scipy.ndimage depending on the value of cuda argumen
 
 
 # %% Libraries
-import scipy.ndimage as cpu_ndimage
+import scipy as cpu_scipyx
 try:
-    import cupyx.scipy.ndimage as gpu_ndimage
+    import cupyx.scipy as gpu_scipyx 
 except ImportError:
     gpu_scipyx = None
 
 
 
 # %% Function
-def ndimage(cuda:bool) :
+def scipyx(cuda:bool) :
     '''
-    Gets scipy.ndimage of cupyx.scipy.ndimage depending on the value of cuda argument.
+    Gets scipy of cupyx.scipy depending on the value of cuda argument.
     
     Parameters
     ----------
@@ -33,7 +33,7 @@ def ndimage(cuda:bool) :
 
     Returns
     -------
-    _ndimage : .ndimage or cupyx.scipy.ndimage
+    _scipyx : scipy or cupyx.scipy
         Library to use.
 
     Raises
@@ -43,14 +43,14 @@ def ndimage(cuda:bool) :
 
     Examples
     --------
-    >>> from arrlp import ndimage
+    >>> from arrlp import scipyx
     ...
-    >>> _ndimage = ndimage(cuda)
+    >>> _scipyx = scipyx(cuda)
     '''
 
-    if cuda and gpu_ndimage is None :
-        raise ImportError('Cupy is not available for ndimage function')
-    return gpu_ndimage if cuda else cpu_ndimage
+    if cuda and gpu_scipyx is None :
+        raise ImportError('Cupy is not available for scipyx function')
+    return gpu_scipyx if cuda else cpu_scipyx
 
 
 

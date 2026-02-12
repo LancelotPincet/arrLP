@@ -20,13 +20,18 @@ sources = {
 'kernel': 'arrlp.modules.kernel_LP.kernel',
 'ndimage': 'arrlp.modules.ndimage_LP.ndimage',
 'parallel_array': 'arrlp.modules.parallel_array_LP.parallel_array',
+'scipyx': 'arrlp.modules.scipyx_LP.scipyx',
 'signal': 'arrlp.modules.signal_LP.signal',
 'volume': 'arrlp.modules.volume_LP.volume',
 'xp': 'arrlp.modules.xp_LP.xp',
-'img_ifft': 'arrlp.modules.image_LP._functions.img_ifft',
 'img_wiener': 'arrlp.modules.image_LP._functions.img_wiener',
+'img_correlate': 'arrlp.modules.image_LP._functions.img_correlate',
 'img_fft': 'arrlp.modules.image_LP._functions.img_fft',
-'img_correlate': 'arrlp.modules.image_LP._functions.img_correlate'
+'img_ifft': 'arrlp.modules.image_LP._functions.img_ifft',
+'sig_wiener': 'arrlp.modules.signal_LP._functions.sig_wiener',
+'sig_fft': 'arrlp.modules.signal_LP._functions.sig_fft',
+'sig_correlate': 'arrlp.modules.signal_LP._functions.sig_correlate',
+'sig_ifft': 'arrlp.modules.signal_LP._functions.sig_ifft'
 }
 
 

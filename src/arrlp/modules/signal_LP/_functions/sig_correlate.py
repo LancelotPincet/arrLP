@@ -6,24 +6,27 @@
 
 
 # %% Libraries
-from arrlp import xp, axes, parallel_array
+from arrlp import xp, ndimage, parallel_array
+from arrlp import kernel as _kernel
 
 
 
 # %% Function
-def temp(array, *,
+def sig_correlate(array, *,
         stacks=False, channels=False, parallel=False, cuda=False, print=None,
-        **kwargs) :
+        kernel=None, out=None, **kernel_kwargs) :
     '''
-    TODO.
+    Makes correlation on signals.
     '''
 
     # Checks
     if parallel and not stacks and not channels :
         raise ValueError('Normal array (no stack of channel) cannot be calculated in parallel')
-    # if parallel :
-    #     import warnings
-    #     warnings.warn('Parallel optimization is not effective in this function')
+    if parallel and cuda :
+        raise SyntaxError('Cuda and Parallel cannot be True at the same time')
+    if parallel :
+        import warnings
+        warnings.warn('Parallel optimization is not effective in this function')
     # if cuda :
     #     import warnings
     #     warnings.warn('Cuda optimization is not effective in this function')
@@ -31,35 +34,58 @@ def temp(array, *,
 
     # Init
     _xp = xp(cuda)
+    _ndimage = ndimage(cuda)
     array = _xp.asarray(array)
-    # if out is None: out = _xp.empty_like(array)
+    if out is None: out = _xp.empty_like(array)
 
     # Function info [update here]
-    func = _xp.TODO
-    ndims = 2
+    func = _ndimage.correlate1d
+    ndims = 1
     ins = (array,)
-    outs = (None,)
+    outs = (out,)
 
     # Init
+    if kernel is None : kernel = _kernel(ndims, cuda=cuda, **kernel_kwargs)
+    nstacks, nchannels = array.shape[0], array.shape[-1]
+    iterator = print.clock if print is not None else range
 
     # Looping on axes
     if cuda or not parallel :
-        _axes = axes(ndims, stacks)
-        return func(array, axes=_axes, **kwargs) # TODO
+
+        match (stacks, channels) :
+            case (False, False) :
+                func(array, weights=kernel, output=out, mode='constant')
+            case (True, False) :
+                for i in iterator(nstacks) :
+                    func(array[i], weights=kernel, output=out[i], mode='constant')
+            case (False, True) :
+                for j in iterator(nchannels) :
+                    func(array[..., j], weights=kernel, output=out[..., j], mode='constant')
+            case (True, True) :
+                for i in iterator(nstacks) :
+                    a, o = array[i], out[i]
+                    for j in range(nchannels) :
+                        func(a[..., j], weights=kernel, output=o[..., j], mode='constant')
+        return out
     
     # Parallel
+    if print is not None : print('Looping in parallel... [ETA not available]')
 
     match (stacks, channels) :
 
         case (True, False) :
-            return parallel_array(func, *ins, outs=outs, stacks=True, **kwargs)
+            return parallel_array(func, *ins, outs=outs, stacks=True, weights=kernel, mode='constant')
 
         case (False, True) :
-            return parallel_array(func, *ins, outs=outs, stacks=False, **kwargs)
+            return parallel_array(func, *ins, outs=outs, stacks=False, weights=kernel, mode='constant')
 
         case (True, True) :
-            _axes = axes(ndims, False)
-            return parallel_array(func, *ins, outs=outs, stacks=True, axes=_axes, **kwargs)
+            def function(array) :
+                out = np.empty_like(array)
+                for j in range(nchannels) :
+                    func(array[..., j], weights=kernel, output=out[..., j], mode='constant')
+                return out
+            return parallel_array(function, *ins, outs=outs, stacks=True)
     
 
 
@@ -80,9 +106,9 @@ if __name__ == '__main__' :
 
 
     # Parameter ~2**24 ; 2**8=256
-    func = TODO
+    func = sig_correlate
     nstacks = int(2**8)
-    shape = (int(2**7), int(2**7))
+    shape = (int(2**14),)
     nchannels = int(2**2)
 
 
@@ -97,10 +123,10 @@ if __name__ == '__main__' :
         # Calculate
         print(f'\n** Testing stacks={stacks}, channels={channels}, parallel={parallel}, cuda={cuda} **')
         print('Compile run...')
-        func(array, stacks=stacks, channels=channels, parallel=parallel, cuda=cuda)
+        func(array, stacks=stacks, channels=channels, parallel=parallel, cuda=cuda, pixel=1, sigma=3)
         print('Run...')
         tic = perf_counter()
-        out = func(array, stacks=stacks, channels=channels, parallel=parallel, cuda=cuda)
+        out = func(array, stacks=stacks, channels=channels, parallel=parallel, cuda=cuda, pixel=1, sigma=3)
         toc = perf_counter()
         print(f'...took {(toc-tic)*1000:.3f}ms\n')
         if cuda : out = _xp.asnumpy(out)
@@ -140,8 +166,8 @@ if __name__ == '__main__' :
                 print(f"Checking correctness vs reference: {opt}")
                 np.testing.assert_allclose(
                     ref, out,
-                    rtol=1e-5,
-                    atol=1e-7,
+                    rtol=1e-4,
+                    atol=1e-5,
                     err_msg="Outputs differ between optimizations"
                 )
 

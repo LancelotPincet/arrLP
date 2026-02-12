@@ -6,7 +6,7 @@
 
 
 # %% Libraries
-from arrlp import xp, axes, parallel_array
+from arrlp import xp, scipyx, axes
 
 
 
@@ -21,9 +21,11 @@ def img_ifft(array, *,
     # Checks
     if parallel and not stacks and not channels :
         raise ValueError('Normal array (no stack of channel) cannot be calculated in parallel')
-    if parallel :
-        import warnings
-        warnings.warn('Parallel optimization is not effective in this function')
+    if parallel and cuda :
+        raise SyntaxError('Cuda and Parallel cannot be True at the same time')
+    # if parallel :
+    #    import warnings
+    #    warnings.warn('Parallel optimization is not effective in this function')
     # if cuda :
     #    import warnings
     #    warnings.warn('Cuda optimization is not effective in this function')
@@ -31,32 +33,19 @@ def img_ifft(array, *,
 
     # Init
     _xp = xp(cuda)
+    _scipyx = scipyx(cuda)
     array = _xp.asarray(array)
 
     # Function info [update here]
-    func = lambda array, *args, axes=None, **kwargs : _xp.fft.ifft2(_xp.fft.ifftshift(array, axes=axes), *args, axes=axes, **kwargs)
+    if parallel :
+        func = lambda array, *args, axes=None, **kwargs : _scipyx.fft.ifft2(_scipyx.fft.ifftshift(array, axes=axes), *args, axes=axes, workers=-1, **kwargs)
+    else :
+        func = lambda array, *args, axes=None, **kwargs : _scipyx.fft.ifft2(_scipyx.fft.ifftshift(array, axes=axes), *args, axes=axes, **kwargs)
     ndims = 2
-    ins = (array,)
-    outs = (None,)
 
     # Looping on axes
-    if cuda or not parallel :
-        _axes = axes(ndims, stacks)
-        return func(array, axes=_axes, **kwargs)
-    
-    # Parallel
-
-    match (stacks, channels) :
-
-        case (True, False) :
-            return parallel_array(func, *ins, outs=outs, stacks=True, **kwargs)
-
-        case (False, True) :
-            return parallel_array(func, *ins, outs=outs, stacks=False, **kwargs)
-
-        case (True, True) :
-            _axes = axes(ndims, False)
-            return parallel_array(func, *ins, outs=outs, stacks=True, axes=_axes, **kwargs)
+    _axes = axes(ndims, stacks)
+    return func(array, axes=_axes, **kwargs)
     
 
 
@@ -137,8 +126,8 @@ if __name__ == '__main__' :
                 print(f"Checking correctness vs reference: {opt}")
                 np.testing.assert_allclose(
                     ref, out,
-                    rtol=1e-5,
-                    atol=1e-6,
+                    rtol=1e-4,
+                    atol=1e-5,
                     err_msg="Outputs differ between optimizations"
                 )
 

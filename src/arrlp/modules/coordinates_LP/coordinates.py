@@ -48,9 +48,8 @@ def coordinates(shape, pixel=1., *, ndims=1, center=True, grid=False, origin=0.,
 
     Returns
     -------
-    coords : np.ndarray or tuple(np.ndarray)
-        for 1 dimensional shape, returns coordinates array.
-        else, return a tuple of arrays for each dimensions.
+    coords : tuple(np.ndarray)
+        return a tuple of arrays for each dimensions.
 
     Raises
     ------
@@ -93,9 +92,7 @@ def coordinates(shape, pixel=1., *, ndims=1, center=True, grid=False, origin=0.,
         coords.append(coord)
 
     #Meshgrid
-    if ndims == 1 :
-        return coords[0]
-    elif grid :
+    if grid and ndims != 1 :
         return _xp.meshgrid(*coords, indexing='ij')
     else :
         return coords
