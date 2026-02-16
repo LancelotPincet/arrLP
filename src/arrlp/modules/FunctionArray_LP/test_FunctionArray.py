@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Date          : 2026-02-09
+# Date          : 2026-02-13
 # Author        : Lancelot PINCET
 # GitHub        : https://github.com/LancelotPincet
 # Library       : template_[library]
-# Module        : axes
+# Module        : FunctionArray
 
 """
-This file allows to test axes
+This file allows to test FunctionArray
 
-axes : Get axes on which to apply the xp function.
+FunctionArray : This class defines a function for various array configurations.
 """
 
 
@@ -17,7 +17,7 @@ axes : Get axes on which to apply the xp function.
 # %% Libraries
 from corelp import print, debug
 import pytest
-from template_[lowerlib] import axes
+from template_[lowerlib] import FunctionArray
 debug_folder = debug(__file__)
 
 
@@ -25,7 +25,7 @@ debug_folder = debug(__file__)
 # %% Function test
 def test_function() :
     '''
-    Test axes function
+    Test FunctionArray function
     '''
     print('Hello world!')
 
@@ -37,7 +37,7 @@ def instance() :
     '''
     Create a new instance at each test function
     '''
-    return axes()
+    return FunctionArray()
 
 def test_instance(instance) :
     '''
@@ -53,9 +53,9 @@ def test_instance(instance) :
 ])
 def test_returns(args, kwargs, expected, message) :
     '''
-    Test axes return values
+    Test FunctionArray return values
     '''
-    assert axes(*args, **kwargs) == expected, message
+    assert FunctionArray(*args, **kwargs) == expected, message
 
 
 
@@ -66,10 +66,10 @@ def test_returns(args, kwargs, expected, message) :
 ])
 def test_errors(args, kwargs, error, error_message) :
     '''
-    Test axes error values
+    Test FunctionArray error values
     '''
     with pytest.raises(error, match=error_message) :
-        axes(*args, **kwargs)
+        FunctionArray(*args, **kwargs)
 
 
 

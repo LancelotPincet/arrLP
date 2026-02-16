@@ -73,10 +73,10 @@ def debug_array(func, modes, **kwargs) :
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             print('Compile run...', end='')
-            func(array, stacks=stacks, channels=channels, parallel=parallel, cuda=cuda, **kwargs, **kw)
+            func(array, stacks=stacks, channels=channels, parallel=parallel, cuda=cuda, test=True, **kwargs, **kw)
             print('\rRun...        ', end='')
             tic = perf_counter()
-            out = func(array, stacks=stacks, channels=channels, parallel=parallel, cuda=cuda, **kwargs, **kw)
+            out = func(array, stacks=stacks, channels=channels, parallel=parallel, cuda=cuda, test=True, **kwargs, **kw)
             toc = perf_counter()
             print(f'\r{key} took {(toc-tic)*1000:.3f}ms      ')
             if cuda : out = _xp.asnumpy(out)
