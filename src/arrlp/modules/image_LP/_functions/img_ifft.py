@@ -6,48 +6,40 @@
 
 
 # %% Libraries
-from arrlp import xp, scipyx, axes
+from arrlp import FunctionArray
 
 
 
 # %% Function
-def img_ifft(array, *,
-        stacks=False, channels=False, parallel=False, cuda=False, print=None,
-        **kwargs) :
-    '''
-    Fast Inverse Fourier Transform on images.
-    '''
 
-    # Checks
-    if parallel and not stacks and not channels :
-        raise ValueError('Normal array (no stack of channel) cannot be calculated in parallel')
-    if parallel and cuda :
-        raise SyntaxError('Cuda and Parallel cannot be True at the same time')
-    # if parallel :
-    #    import warnings
-    #    warnings.warn('Parallel optimization is not effective in this function')
-    # if cuda :
-    #    import warnings
-    #    warnings.warn('Cuda optimization is not effective in this function')
-        
+# Initializations
+def _img_ifft(self, out, array, *args, **kwargs) :
+    return self.scipyx.fft.ifft2(self.scipyx.fft.ifftshift(array, axes=self.axes), *args, axes=self.axes, **kwargs)
 
-    # Init
-    _xp = xp(cuda)
-    _scipyx = scipyx(cuda)
-    array = _xp.asarray(array)
+def par_img_ifft(self, out, array, *args, **kwargs) :
+    return self.scipyx.fft.ifft2(self.scipyx.fft.ifftshift(array, axes=self.axes), *args, axes=self.axes, workers=-1, **kwargs)
 
-    # Function info [update here]
-    if parallel :
-        func = lambda array, *args, axes=None, **kwargs : _scipyx.fft.ifft2(_scipyx.fft.ifftshift(array, axes=axes), *args, axes=axes, workers=-1, **kwargs)
-    else :
-        func = lambda array, *args, axes=None, **kwargs : _scipyx.fft.ifft2(_scipyx.fft.ifftshift(array, axes=axes), *args, axes=axes, **kwargs)
-    ndims = 2
 
-    # Looping on axes
-    _axes = axes(ndims, stacks)
-    return func(array, axes=_axes, **kwargs)
+
+# Main function
+img_ifft = FunctionArray(
     
+    # Mandatory
+    ndims = 2,
+    cpu_function = _img_ifft,
+    par_function = par_img_ifft,
+    gpu_function = _img_ifft,
+    out_function = None,
+    ini_function = None,
 
+    # Loops
+    use_joblib = False, # If True, arguments of parallel function should not have "out".
+
+    # Performances
+    remove_parallel = False,
+    remove_cuda = False,
+
+)
 
 
 

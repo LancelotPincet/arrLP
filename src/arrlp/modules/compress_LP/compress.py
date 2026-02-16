@@ -13,8 +13,11 @@ Compresses an array between values by normalizing, with possibility to saturate 
 
 
 # %% Libraries
-from arrlp import xp
 import numpy as np
+try :
+    import cupy as cp
+except ImportError :
+    cp = None
 
 
 
@@ -64,16 +67,16 @@ def compress(array, /, max=1, min=0, *, dtype=None, white=None, black=None, whit
     '''
 
     # init
-    _xp = xp(cuda)
-    array = _xp.asarray(array)
+    xp = cp if cuda and cp is not None else np
+    array = xp.asarray(array)
     if dtype is None :
         dtype = array.dtype
 
     # Get white/black
     if white is None :
-        white = _xp.nanmax(array) if white_percent is None else _xp.nanpercentile(array, 100-white_percent)
+        white = xp.nanmax(array) if white_percent is None else xp.nanpercentile(array, 100-white_percent)
     if black is None :
-        black = _xp.nanmin(array) if black_percent is None else _xp.nanpercentile(array, black_percent)
+        black = xp.nanmin(array) if black_percent is None else xp.nanpercentile(array, black_percent)
     if white <= black :
         raise ValueError('white <= black is not possible while compressing')
 
@@ -81,13 +84,13 @@ def compress(array, /, max=1, min=0, *, dtype=None, white=None, black=None, whit
     if max is not None and min is not None and min >= max :
         raise ValueError('min >= max is not possible while compressing')
     if max is not None :
-        array = normalization(array, value=max, norm=white, fix=black, xp=_xp)
+        array = normalization(array, value=max, norm=white, fix=black, xp=xp)
         white = max
     if min is not None :
-        array = normalization(array, value=min, norm=black, fix=white, xp=_xp)
+        array = normalization(array, value=min, norm=black, fix=white, xp=xp)
         black = min
     if max is None and min is None :
-        array = _xp.copy(array)
+        array = xp.copy(array)
 
     # Saturation
     if saturate is not None :

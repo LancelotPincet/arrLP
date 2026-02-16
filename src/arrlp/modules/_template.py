@@ -13,11 +13,20 @@ from arrlp import FunctionArray
 # %% Function
 
 # Initializations
-def _img_fft(self, out, array, *args, **kwargs) :
-    return self.scipyx.fft.fftshift(self.scipyx.fft.fft2(array, *args, axes=self.axes, **kwargs), axes=self.axes)
+def ini_arr_function(self, array, *args, **kwargs) :
+    return dict()
 
-def par_img_fft(self, out, array, *args, **kwargs) :
-    return self.scipyx.fft.fftshift(self.scipyx.fft.fft2(array, *args, axes=self.axes, workers=-1, **kwargs), axes=self.axes)
+def out_arr_function(self, array, *args, **kwargs) :
+    return self.xp.empty_like(array)
+
+def cpu_arr_function(self, out, array, *args, **kwargs) :
+    return out # TODO
+
+def par_arr_function(self, out, array, *args, **kwargs) :
+    return out # TODO
+
+def gpu_arr_function(self, out, array, *args, **kwargs) :
+    return out # TODO
 
 
 
@@ -26,14 +35,17 @@ arr_function = FunctionArray(
     
     # Mandatory
     ndims = 2,
-    cpu_function = _img_fft,
-    par_function = par_img_fft,
-    gpu_function = _img_fft,
-    out_function = None,
-    ini_function = None,
+    cpu_function = cpu_arr_function,
+    par_function = par_arr_function,
+    gpu_function = gpu_arr_function,
+    out_function = out_arr_function,
+    ini_function = ini_arr_function,
 
     # Loops
-    use_joblib = False, # If True, arguments of parallel function should not have "out".
+    cpu_loop = False,
+    par_loop = False,
+    gpu_loop = False,
+    use_joblib = True, # If True, arguments of parallel function should not have "out".
 
     # Performances
     remove_parallel = False,

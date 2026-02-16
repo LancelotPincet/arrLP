@@ -14,7 +14,10 @@ This function will return a ndarray corresponding to the coordinates array of th
 
 # %% Libraries
 import numpy as np
-from arrlp import xp
+try :
+    import cupy as cp
+except ImportError :
+    cp = None
 
 
 
@@ -64,7 +67,7 @@ def coordinates(shape, pixel=1., *, ndims=1, center=True, grid=False, origin=0.,
     >>> coordinates = coordinates(array, pixel=10, center=(True, False), grid=False, origin=(0,3))
     ... array([[-20.], [-10.], [0.], [10.], [20.]]), array([[3., 13., 23., 33.]])
     '''
-    _xp = xp(cuda)
+    xp = cp if cuda and cp is not None else np
 
     # Manage shape argument
     if isinstance(shape, int) :
@@ -85,7 +88,7 @@ def coordinates(shape, pixel=1., *, ndims=1, center=True, grid=False, origin=0.,
     #looping on shape
     coords = []
     for dim, (n, pix, cent, orig) in enumerate(zip(shape, pixel, center, origin)) :
-        coord = n2coord(n, pixel=pix, center=cent, origin=orig, xp=_xp)
+        coord = n2coord(n, pixel=pix, center=cent, origin=orig, xp=xp)
         reshape = np.ones(ndims, dtype=int)
         reshape[dim] = len(coord)
         coord = coord.reshape(tuple(reshape))
@@ -93,7 +96,7 @@ def coordinates(shape, pixel=1., *, ndims=1, center=True, grid=False, origin=0.,
 
     #Meshgrid
     if grid and ndims != 1 :
-        return _xp.meshgrid(*coords, indexing='ij')
+        return xp.meshgrid(*coords, indexing='ij')
     else :
         return coords
 

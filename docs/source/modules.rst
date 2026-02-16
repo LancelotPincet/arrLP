@@ -11,17 +11,11 @@ Here are the references to the various modules to import in **arrLP**.
    :maxdepth: 1
    :caption: Modules
 
-   kernel
-   axes
-   signal
-   check_optimizations
-   coordinates
    compress
-   debug_array
-   FunctionArray
+   kernel
    volume
-   ndimage
-   parallel_array
-   scipyx
+   debug_array
    image
-   xp
+   coordinates
+   FunctionArray
+   signal

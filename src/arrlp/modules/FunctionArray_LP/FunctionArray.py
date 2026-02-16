@@ -17,6 +17,8 @@ import types
 from dataclasses import dataclass, field
 import numpy as np
 import scipy
+from joblib import Parallel, delayed
+from numba import njit, prange
 
 # Check cupy
 try :
@@ -38,40 +40,22 @@ class FunctionArray() :
     ----------
     ndims : int
         Number of dimensions of the base array.
-    function : types.FunctionType
-        Default function used if no override.
+    cpu_function : types.FunctionType
+        Cpu function.
+    par_function : types.FunctionType
+        Par function.
+    gpu_function : types.FunctionType
+        Gpu function.
     out_function : types.FunctionType
         Function defining output array.
-    _cpu_function : types.FunctionType
-        Cpu function override.
-    _par_function : types.FunctionType
-        Par function override.
-    _gpu_function : types.FunctionType
-        Gpu function override.
-    cpu_out_name : str
-        Name of argument of inplace output for cpu_function.
-    par_out_name : str
-        Name of argument of inplace output for par_function.
-    gpu_out_name : str
-        Name of argument of inplace output for gpu_function.
+    ini_function : types.FunctionType
+        Function defining initialization kwargs.
     cpu_loop : bool
         True if cpu_function applyies default loop.
     par_loop : bool
         True if par_function applyies default loop.
     gpu_loop : bool
         True if gpu_function applyies default loop.
-    cpu_factory : types.FunctionType
-        Function that creates numba compiled functions on cpu.
-    par_factory : types.FunctionType
-        Function that creates numba compiled functions on parallel.
-    gpu_factory : types.FunctionType
-        Function that creates numba compiled functions on gpu.
-    cpu_axes_name : str
-        Name of argument of axes definition for cpu_function.
-    par_axes_name : str
-        Name of argument of axes definition for par_function.
-    gpu_axes_name : str
-        Name of argument of axes definition for gpu_function.
     use_joblib : bool
         True to use joblib for parallel processes in parallel loop.
     remove_parallel : bool
@@ -88,35 +72,16 @@ class FunctionArray() :
 
     # Mandatory
     ndims : int
-    function : types.FunctionType = field(repr=False)
+    cpu_function : types.FunctionType = field(repr=False)
+    par_function : types.FunctionType = field(repr=False)
+    gpu_function : types.FunctionType = field(repr=False)
     out_function : types.FunctionType = field(repr=False)
-
-    # Functions overrides
-    _cpu_function : types.FunctionType = field(default=None, repr=False)
-    _par_function : types.FunctionType = field(default=None, repr=False)
-    _gpu_function : types.FunctionType = field(default=None, repr=False)
-
-    # Output
-    cpu_out_name : str = field(default='out', repr=False)
-    par_out_name : str = field(default='out', repr=False)
-    gpu_out_name : str = field(default='out', repr=False)
+    ini_function : types.FunctionType = field(repr=False)
 
     # Loops
     cpu_loop : types.FunctionType = field(default=False, repr=False)
     par_loop : types.FunctionType = field(default=False, repr=False)
     gpu_loop : types.FunctionType = field(default=False, repr=False)
-
-    # Numba
-    cpu_factory : types.FunctionType = field(default=None, repr=False)
-    par_factory : types.FunctionType = field(default=None, repr=False)
-    gpu_factory : types.FunctionType = field(default=None, repr=False)
-
-    # Axes
-    cpu_axes_name : bool = field(default=None, repr=False)
-    par_axes_name : bool = field(default=None, repr=False)
-    gpu_axes_name : bool = field(default=None, repr=False)
-
-    # Parallel loops
     use_joblib : bool = field(default=True, repr=False)
 
     # Performances
@@ -125,14 +90,12 @@ class FunctionArray() :
 
 
 
-    # Init
-    def __post_init__(self) :
-        pass
-
-
-
     # Methods
-    def __call__(self, *args, out=None, # Arrays
+    stacks : bool = field(init=False, repr=False)
+    channels : bool = field(init=False, repr=False)
+    parallel : bool = field(init=False, repr=False)
+    cuda : bool = field(init=False, repr=False)
+    def __call__(self, array, *args, out=None, # Arrays
         stacks=False, channels=False, parallel=False, cuda=False, test=False, iterator=range, # Modes
         **kwargs) : # Arguments of the function
         '''
@@ -140,158 +103,64 @@ class FunctionArray() :
     
         Parameters
         ----------
-        a : int or float
-            TODO.
+        array : np.array
+            At least one array from which we derive stacks and channels.
+        *args : tuple(np.array)
+            Tuple of array corresponding to inputs that follow the same stacks and channels dimensions.
+        out : np.array
+            Output array where to put result, might not be always available
+        stacks : bool
+            True to consider stacks dimensions
+        channels : bool
+            True to consider channels dimensions
+        parallel : bool
+            True to optimize in parallel cpu cores
+        cuda : bool
+            True to optimize on gpu
+        test : bool
+            [dev only], True when testing the speed to avoid raising errors on function that were defined as not optimal
+        iterator : iterator
+            Iterator defining how to loop on dimensions, must take an int as only input, allow to put progress bars.
+        **kwargs : dict
+            Other constant inputs to apply on each array
 
         Returns
         -------
-        b : int or float
-            TODO.
-
-        Raises
-        ------
-        TypeError
-            TODO.
-
-        Examples
-        --------
-        >>> self.method() # TODO
+        out : np.array
+            Output array.
         '''
 
         # checks
-        self.checks(stacks, channels, parallel, cuda, test)
+        self.checks(out, stacks, channels, parallel, cuda, test)
         self.stacks, self.channels, self.parallel, self.cuda = stacks, channels, parallel, cuda
+        out = out if out is not None else self.out_function(self, array, *args, **kwargs) if self.out_function is not None else None
+        if self.ini_function is not None :
+            kwargs.update(self.ini_function(self, array, *args, **kwargs))
 
         # Cuda
         if cuda :
-            if self.gpu_axes_name :
-                if self.gpu_out_name is not None : kwargs[self.gpu_out_name] = self.out_function(*args, **kwargs) if out is None else out
-                elif out is not None : raise SyntaxError('Output cannot be defined in this gpu function')
-                kwargs[self.gpu_axes_name] = self.axes
-                return self.gpu_function(*args, **kwargs)
-            if self.gpu_factory is not None :
-                if self.gpu_out_name is not None : kwargs[self.gpu_out_name] = self.out_function(*args, **kwargs) if out is None else out
-                elif out is not None : raise SyntaxError('Output cannot be defined in this gpu function')
-                return self.gpu_function(*args, **kwargs)
             if self.gpu_loop :
-                out = self.out_function(*args, **kwargs) if out is None else out
-                return self.loop(self.gpu_function, iterator, out, self.gpu_out_name, *args, **kwargs)
-            raise SyntaxError('Gpu calculation was not found')
+                return self.loop(self.gpu_function, iterator, out, array, *args, **kwargs)
+            return self.gpu_function(self, out, array, *args, **kwargs)
 
         # Parallel
         elif parallel :
-            if self.par_axes_name :
-                if self.par_out_name is not None : kwargs[self.par_out_name] = self.out_function(*args, **kwargs) if out is None else out
-                elif out is not None : raise SyntaxError('Output cannot be defined in this parallel function')
-                kwargs[self.par_axes_name] = self.axes
-                return self.par_function(*args, **kwargs)
-            if self.par_factory is not None :
-                if self.par_out_name is not None : kwargs[self.par_out_name] = self.out_function(*args, **kwargs) if out is None else out
-                elif out is not None : raise SyntaxError('Output cannot be defined in this parallel function')
-                return self.gpu_function(*args, **kwargs)
             if self.par_loop :
                 if self.use_joblib :
-                    return self.parallel_loop(self.par_function, iterator, self.par_out_name, *args, **kwargs)
+                    return self.parallel_loop(self.par_function, out, array, *args, **kwargs)
                 else :
-                    out = self.out_function(*args, **kwargs) if out is None else out
-                    return self.loop(self.par_function, iterator, out, self.par_out_name, *args, **kwargs)
-            raise SyntaxError('Parallel calculation was not found')
+                    return self.loop(self.par_function, iterator, out, array, *args, **kwargs)
+            return self.par_function(self, out, array, *args, **kwargs)
 
         # Python
         else :
-            if self.cpu_axes_name :
-                if self.gpu_out_name is not None : kwargs[self.gpu_out_name] = self.out_function(*args, **kwargs) if out is None else out
-                elif out is not None : raise SyntaxError('Output cannot be defined in this gpu function')
-                kwargs[self.cpu_axes_name] = self.axes
-                return self.cpu_function(*args, **kwargs)
-            if self.cpu_factory is not None :
-                return self.cpu_function(*args, **kwargs)
             if self.cpu_loop :
-                out = self.out_function(*args, **kwargs) if out is None else out
-                return self.loop(self.cpu_function, iterator, out, self.cpu_out_name, *args, **kwargs)
-            raise SyntaxError('Cpu calculation was not found')
+                return self.loop(self.cpu_function, iterator, out, array, *args, **kwargs)
+            return self.cpu_function(self, out, array, *args, **kwargs)
 
 
 
     # Properties
-    cpu_none_numba : str = field(default=None, init=False, repr=False)
-    cpu_stack_numba : str = field(default=None, init=False, repr=False)
-    cpu_channel_numba : str = field(default=None, init=False, repr=False)
-    cpu_full_numba : str = field(default=None, init=False, repr=False)
-    @property
-    def cpu_function(self) :
-        if self.cpu_factory is not None :
-            match (self.stacks, self.channels) :
-                case (True, True) :
-                    if self.cpu_full_numba is None :
-                        self.cpu_full_numba = self.cpu_factory(self.stacks, self.channels)
-                    return self.cpu_full_numba
-                case (False, False) :
-                    if self.cpu_none_numba is None :
-                        self.cpu_none_numba = self.cpu_factory(self.stacks, self.channels)
-                    return self.cpu_none_numba
-                case (True, False) :
-                    if self.cpu_stack_numba is None :
-                        self.cpu_stack_numba = self.cpu_factory(self.stacks, self.channels)
-                    return self.cpu_stack_numba
-                case (False, True) :
-                    if self.cpu_channel_numba is None :
-                        self.cpu_channel_numba = self.cpu_factory(self.stacks, self.channels)
-                    return self.cpu_channel_numba
-        if self.function is None and self._cpu_function is None : raise SyntaxError('Cpu function was not defined')
-        return self.function if self._cpu_function is None else self._cpu_function
-    par_none_numba : str = field(default=None, init=False, repr=False)
-    par_stack_numba : str = field(default=None, init=False, repr=False)
-    par_channel_numba : str = field(default=None, init=False, repr=False)
-    par_full_numba : str = field(default=None, init=False, repr=False)
-    @property
-    def par_function(self) :
-        if self.par_factory is not None :
-            match (self.stacks, self.channels) :
-                case (True, True) :
-                    if self.par_full_numba is None :
-                        self.par_full_numba = self.par_factory(self.stacks, self.channels)
-                    return self.par_full_numba
-                case (False, False) :
-                    if self.par_none_numba is None :
-                        self.par_none_numba = self.par_factory(self.stacks, self.channels)
-                    return self.par_none_numba
-                case (True, False) :
-                    if self.par_stack_numba is None :
-                        self.par_stack_numba = self.par_factory(self.stacks, self.channels)
-                    return self.par_stack_numba
-                case (False, True) :
-                    if self.par_channel_numba is None :
-                        self.par_channel_numba = self.par_factory(self.stacks, self.channels)
-                    return self.par_channel_numba
-        if self.function is None and self._par_function is None : raise SyntaxError('Parallel function was not defined')
-        return self.function if self._par_function is None else self._par_function
-    gpu_none_numba : str = field(default=None, init=False, repr=False)
-    gpu_stack_numba : str = field(default=None, init=False, repr=False)
-    gpu_channel_numba : str = field(default=None, init=False, repr=False)
-    gpu_full_numba : str = field(default=None, init=False, repr=False)
-    @property
-    def gpu_function(self) :
-        if self.gpu_factory is not None :
-            match (self.stacks, self.channels) :
-                case (True, True) :
-                    if self.gpu_full_numba is None :
-                        self.gpu_full_numba = self.gpu_factory(self.stacks, self.channels)
-                    return self.gpu_full_numba
-                case (False, False) :
-                    if self.gpu_none_numba is None :
-                        self.gpu_none_numba = self.gpu_factory(self.stacks, self.channels)
-                    return self.gpu_none_numba
-                case (True, False) :
-                    if self.gpu_stack_numba is None :
-                        self.gpu_stack_numba = self.gpu_factory(self.stacks, self.channels)
-                    return self.gpu_stack_numba
-                case (False, True) :
-                    if self.gpu_channel_numba is None :
-                        self.gpu_channel_numba = self.gpu_factory(self.stacks, self.channels)
-                    return self.gpu_channel_numba
-        if self.function is None and self._gpu_function is None : raise SyntaxError('Gpu function was not defined')
-        return self.function if self._gpu_function is None else self._gpu_function
     @property
     def axes(self) :
         start = int(self.stacks)
@@ -308,7 +177,7 @@ class FunctionArray() :
 
 
 
-    def checks(self, stacks, channels, parallel, cuda, test) :
+    def checks(self, out, stacks, channels, parallel, cuda, test) :
         '''
         Make checks on asked mode
         '''
@@ -330,30 +199,99 @@ class FunctionArray() :
             raise ValueError('Cuda optimization is not effective in this function')
 
         # Joblib when no additional channels 
-        if parallel and not stacks and not channels and self.par_loop:
+        if parallel and not stacks and not channels and self.use_joblib :
             raise ValueError('Normal array (no stack of channel) cannot be calculated in parallel')
 
+        # Inplace out not possible
+        if out is not None and self.out_function is None and not stacks and not channels :
+            raise ValueError('Output cannot be defined in this function for normal single array')
 
 
-    def loop(self, func, iterator, array, *args, out=None, out_name=None, **kwargs) :
+
+    def loop(self, func, iterator, out, array, *args, **kwargs) :
     
         nstacks, nchannels = array.shape[0], array.shape[-1]
-        if self.gpu_out_name is not None : kwargs[self.gpu_out_name] = self.out_function(*args, **kwargs) if out is None else out
         match (self.stacks, self.channels) :
+
             case (False, False) :
-                out[:] = func(array)
+                return func(self, out, array, *args, **kwargs)
             case (True, False) :
                 for i in iterator(nstacks) :
-                    out[i] = func(array[i])
+                    stack_out = None if out is None else out[i]
+                    _stack_out = func(self, stack_out, array[i], *(arg[i] for arg in args), **kwargs)
+                    if out is None :
+                        if i == 0 : _out = self.xp.empty_like(_stack_out, shape=(nstacks, *_stack_out.shape))
+                        _out[i] = _stack_out
+                return _out if out is None else out
             case (False, True) :
                 for j in iterator(nchannels) :
-                    out[..., j] = func(array[..., j])
+                    channel_out = None if out is None else out[..., j]
+                    _channel_out = func(self, channel_out, array[..., j], *(arg[..., j] for arg in args), **kwargs)
+                    if out is None :
+                        if j == 0 : _out = self.xp.empty_like(_channel_out, shape=(*_channel_out.shape, nchannels))
+                        _out[..., j] = _channel_out
+                return _out if out is None else out
             case (True, True) :
                 for i in iterator(nstacks) :
-                    a, o = array[i], out[i]
+                    stack_out, stack_array, stack_args = None if out is None else out[i], array[i], (arg[i] for arg in args)
+                    if out is None and i > 0 : _stack_out = _out[i]
                     for j in range(nchannels) :
-                        o[..., j] = func(a[..., j])
-        return out
+                        channel_out = None if stack_out is None else stack_out[..., j]
+                        _channel_out = func(self, channel_out, stack_array[..., j], *(arg[..., j] for arg in stack_args), **kwargs)
+                        if out is None :
+                            if i == 0 and j == 0 : 
+                                _out = self.xp.empty_like(_channel_out, shape=(nstacks, *_channel_out.shape, nchannels))
+                                _stack_out = _out[i]
+                            _stack_out[..., j] = _channel_out
+                return _out if out is None else out
+
+            case _ : raise SyntaxError(f'Cannot use (stacks, channels, out_name)={(self.stacks, self.channels, out_name)}')
+
+
+
+    def parallel_loop(self, func, out, array, *args, **kwargs) :
+
+        nstacks, nchannels = array.shape[0], array.shape[-1]
+        match (self.stacks, self.channels) :
+
+            case (False, False) :
+                raise SyntaxError('This parallel scenario with no stack nor channel should not exist. [should be corrected in checks]')
+            case (True, False) :
+                copy = Parallel(n_jobs=-1, backend="loky")(delayed(func)(self, array[i], *(arg[i] for arg in args), **kwargs) for i in range(nstacks))
+                if out is None : out = np.empty_like(copy[0], shape=(len(copy), *copy[0].shape))
+                return copystacks(list(copy), out)
+            case (False, True) :
+                copy = Parallel(n_jobs=-1, backend="loky")(delayed(func)(self, array[..., i], *(arg[..., i] for arg in args), **kwargs) for i in range(nchannels))
+                if out is None : out = np.empty_like(copy[0], shape=(*copy[0].shape, len(copy)))
+                return copychannels(list(copy), out)
+            case (True, True) :
+                newfunc = lambda self, array, *args, **kwargs : [func(self, array[..., j], *(arg[..., j] for arg in args), **kwargs) for j in range(nchannels)]
+                copy = Parallel(n_jobs=-1, backend="loky")(delayed(newfunc)(self, array[i], *(arg[i] for arg in args), **kwargs) for i in range(nstacks))
+                if out is None : out = np.empty_like(copy[0][0], shape=(len(copy), *copy[0][0].shape, len(copy[0])))
+                return copystacksnchannels(list(copy), out)
+            
+            case _ : raise SyntaxError(f'Cannot use (stacks, channels)={(self.stacks, self.channels)}')
+
+
+
+@njit(parallel=True)
+def copystacks(copyfrom, copyto):
+    for i in prange(len(copyfrom)):
+        copyto[i] = copyfrom[i]
+    return copyto
+
+@njit(parallel=True)
+def copychannels(copyfrom, copyto):
+    for j in prange(len(copyfrom)):
+        copyto[..., j] = copyfrom[j]
+    return copyto
+
+def copystacksnchannels(copyfrom, copyto):
+    for i in prange(len(copyfrom)):
+        stack_copyfrom, stack_copyto = copyfrom[i], copyto[i]
+        for j in range(len(stack_copyfrom)) :
+            stack_copyto[..., j] = stack_copyfrom[j]
+    return copyto
 
 
 

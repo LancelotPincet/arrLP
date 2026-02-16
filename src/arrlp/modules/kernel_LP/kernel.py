@@ -13,8 +13,12 @@ This funtion creates kernels small arrays, mainly for convolutions.
 
 
 # %% Libraries
-from arrlp import coordinates, xp
+from arrlp import coordinates
 import numpy as np
+try :
+    import cupy as cp
+except ImportError :
+    cp = None
 from scipy.special import erf, erfinv, j1
 
 
@@ -82,8 +86,8 @@ def kernel(ndims=2, pixel=1, *, dtype=np.float32, shape=None, cuda=False, atrou=
 
     k = k.astype(dtype)
     k /= k.sum()
-    _xp = xp(cuda)
-    return _xp.asarray(k)
+    xp = cp if cuda and cp is not None else np
+    return xp.asarray(k)
 
 
 

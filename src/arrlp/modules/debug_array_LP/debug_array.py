@@ -19,7 +19,6 @@ try :
 except ImportError :
     cp = None
 from time import perf_counter
-from arrlp import xp
 import warnings
 
 
@@ -50,12 +49,14 @@ def debug_array(func, modes, **kwargs) :
     # Data size ~2**24
     nstacks = int(2**8)
     nchannels = int(2**2)
-    if func.__name__.startswith('sig') :
-        shape = (int(2**14),)
-    if func.__name__.startswith('img') :
-        shape = (int(2**7), int(2**7))
-    if func.__name__.startswith('vol') :
-        shape = (int(2**4), int(2**5), int(2**5))
+    match func.ndims :
+        case 1:
+            shape = (int(2**14),)
+        case 2:
+            shape = (int(2**7), int(2**7))
+        case 3:
+            shape = (int(2**4), int(2**5), int(2**5))
+        case _: raise ValueError(f'number of dimensions cannot be {func.ndims}')
 
     # Manage modes
     modes = {key: value for key, value in modes.items() if cp is not None or not value["cuda"]}
@@ -66,8 +67,8 @@ def debug_array(func, modes, **kwargs) :
     def timeit(key, array, stacks, channels, parallel, cuda, **kw) :
 
         # Init
-        _xp = xp(cuda)
-        array = _xp.asarray(array)
+        xp = cp if cuda else np
+        array = xp.asarray(array)
 
         # Calculate
         with warnings.catch_warnings():
@@ -79,7 +80,7 @@ def debug_array(func, modes, **kwargs) :
             out = func(array, stacks=stacks, channels=channels, parallel=parallel, cuda=cuda, test=True, **kwargs, **kw)
             toc = perf_counter()
             print(f'\r{key} took {(toc-tic)*1000:.3f}ms      ')
-            if cuda : out = _xp.asnumpy(out)
+            if cuda : out = xp.asnumpy(out)
         return out
 
 
