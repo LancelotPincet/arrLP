@@ -13,19 +13,19 @@ from arrlp import FunctionArray
 # %% Function
 
 # Initializations
-def ini_arr_function(self, array, *args, **kwargs) :
+def ini_arr_function(self, array, **kwargs) :
     return dict()
 
-def out_arr_function(self, array, *args, **kwargs) :
+def out_arr_function(self, array, **kwargs) :
     return self.xp.empty_like(array)
 
-def cpu_arr_function(self, out, array, *args, **kwargs) :
+def cpu_arr_function(self, out, array, **kwargs) :
     return out # TODO
 
-def par_arr_function(self, out, array, *args, **kwargs) :
+def par_arr_function(self, out, array, **kwargs) :
     return out # TODO
 
-def gpu_arr_function(self, out, array, *args, **kwargs) :
+def gpu_arr_function(self, out, array, **kwargs) :
     return out # TODO
 
 

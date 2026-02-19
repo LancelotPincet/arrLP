@@ -13,22 +13,22 @@ from arrlp import FunctionArray
 # %% Function
 
 # Initializations
-def _img_ifft(self, out, array, **kwargs) :
-    return self.scipyx.fft.ifft2(self.scipyx.fft.ifftshift(array, axes=self.axes), axes=self.axes, **kwargs)
+def _sig_fft(self, out, array, **kwargs) :
+    return self.scipyx.fft.fftshift(self.scipyx.fft.fft(array, axis=self.axes[0], **kwargs), axes=self.axes)
 
-def par_img_ifft(self, out, array, **kwargs) :
-    return self.scipyx.fft.ifft2(self.scipyx.fft.ifftshift(array, axes=self.axes), axes=self.axes, workers=-1, **kwargs)
+def par_sig_fft(self, out, array, **kwargs) :
+    return self.scipyx.fft.fftshift(self.scipyx.fft.fft(array, axis=self.axes[0], workers=-1, **kwargs), axes=self.axes)
 
 
 
 # Main function
-img_ifft = FunctionArray(
+sig_fft = FunctionArray(
     
     # Mandatory
-    ndims = 2,
-    cpu_function = _img_ifft,
-    par_function = par_img_ifft,
-    gpu_function = _img_ifft,
+    ndims = 1,
+    cpu_function = _sig_fft,
+    par_function = par_sig_fft,
+    gpu_function = _sig_fft,
     out_function = None,
     ini_function = None,
 
@@ -45,7 +45,7 @@ img_ifft = FunctionArray(
 
 if __name__ == '__main__' :
     from arrlp import debug_array
-    func = img_ifft
+    func = sig_fft
 
     # Arguments
     kwargs = dict(

@@ -13,39 +13,39 @@ from arrlp import FunctionArray
 # %% Function
 
 # Initializations
-def ini_img_correlate(self, array, kernel, **kwargs) :
+def ini_sig_correlate(self, array, kernel, **kwargs) :
     return dict(
         kernel=self.xp.asarray(kernel),
     )
 
-def out_img_correlate(self, array, **kwargs) :
+def out_sig_correlate(self, array, **kwargs) :
     return self.xp.empty_like(array)
 
-def _img_correlate(self, out, array, kernel, mode='nearest', **kwargs) :
-    return self.ndimage.correlate(array, weights=kernel, axes=self.axes, output=out, mode=mode, **kwargs)
+def _sig_correlate(self, out, array, kernel, mode='nearest', **kwargs) :
+    return self.ndimage.correlate1d(array, weights=kernel, axis=self.axes[0], output=out, mode=mode, **kwargs)
 
-def par_img_correlate(self, array, kernel, mode='nearest', **kwargs) :
-    return self.ndimage.correlate(array, weights=kernel, mode=mode, **kwargs)
+def par_sig_correlate(self, array, kernel, mode='nearest', **kwargs) :
+    return self.ndimage.correlate1d(array, weights=kernel, mode=mode, **kwargs)
 
 
 
 # Main function
-img_correlate = FunctionArray(
+sig_correlate = FunctionArray(
     
     # Mandatory
-    ndims = 2,
-    cpu_function = _img_correlate,
-    par_function = par_img_correlate,
-    gpu_function = _img_correlate,
-    out_function = out_img_correlate,
-    ini_function = ini_img_correlate,
+    ndims = 1,
+    cpu_function = _sig_correlate,
+    par_function = par_sig_correlate,
+    gpu_function = _sig_correlate,
+    out_function = out_sig_correlate,
+    ini_function = ini_sig_correlate,
 
     # Loops
     par_loop = True,
     use_joblib = True, # If True, arguments of parallel function should not have "out".
 
     # Performances
-    remove_parallel = False,
+    remove_parallel = True,
     remove_cuda = False,
 
 )
@@ -55,11 +55,11 @@ img_correlate = FunctionArray(
 if __name__ == '__main__' :
     from arrlp import debug_array
     from arrlp import kernel
-    func = img_correlate
+    func = sig_correlate
 
     # Arguments
     kwargs = dict(
-        kernel=kernel(ndims=2, pixel=1, sigma=3),
+        kernel=kernel(ndims=1, pixel=1, sigma=3),
     )
 
     # Modes

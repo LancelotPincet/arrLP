@@ -13,22 +13,22 @@ from arrlp import FunctionArray
 # %% Function
 
 # Initializations
-def _img_ifft(self, out, array, **kwargs) :
-    return self.scipyx.fft.ifft2(self.scipyx.fft.ifftshift(array, axes=self.axes), axes=self.axes, **kwargs)
+def _sig_ifft(self, out, array, **kwargs) :
+    return self.scipyx.fft.ifft(self.scipyx.fft.ifftshift(array, axes=self.axes), axis=self.axes[0], **kwargs)
 
-def par_img_ifft(self, out, array, **kwargs) :
-    return self.scipyx.fft.ifft2(self.scipyx.fft.ifftshift(array, axes=self.axes), axes=self.axes, workers=-1, **kwargs)
+def par_sig_ifft(self, out, array, **kwargs) :
+    return self.scipyx.fft.ifft(self.scipyx.fft.ifftshift(array, axes=self.axes), axis=self.axes[0], workers=-1, **kwargs)
 
 
 
 # Main function
-img_ifft = FunctionArray(
+sig_ifft = FunctionArray(
     
     # Mandatory
-    ndims = 2,
-    cpu_function = _img_ifft,
-    par_function = par_img_ifft,
-    gpu_function = _img_ifft,
+    ndims = 1,
+    cpu_function = _sig_ifft,
+    par_function = par_sig_ifft,
+    gpu_function = _sig_ifft,
     out_function = None,
     ini_function = None,
 
@@ -45,7 +45,7 @@ img_ifft = FunctionArray(
 
 if __name__ == '__main__' :
     from arrlp import debug_array
-    func = img_ifft
+    func = sig_ifft
 
     # Arguments
     kwargs = dict(

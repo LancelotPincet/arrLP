@@ -13,16 +13,16 @@ from arrlp import FunctionArray
 # %% Function
 
 # Initializations
-def _img_fft(self, out, array, *args, **kwargs) :
-    return self.scipyx.fft.fftshift(self.scipyx.fft.fft2(array, *args, axes=self.axes, **kwargs), axes=self.axes)
+def _img_fft(self, out, array, **kwargs) :
+    return self.scipyx.fft.fftshift(self.scipyx.fft.fft2(array, axes=self.axes, **kwargs), axes=self.axes)
 
-def par_img_fft(self, out, array, *args, **kwargs) :
-    return self.scipyx.fft.fftshift(self.scipyx.fft.fft2(array, *args, axes=self.axes, workers=-1, **kwargs), axes=self.axes)
+def par_img_fft(self, out, array, **kwargs) :
+    return self.scipyx.fft.fftshift(self.scipyx.fft.fft2(array, axes=self.axes, workers=-1, **kwargs), axes=self.axes)
 
 
 
 # Main function
-arr_function = FunctionArray(
+img_fft = FunctionArray(
     
     # Mandatory
     ndims = 2,
@@ -45,7 +45,7 @@ arr_function = FunctionArray(
 
 if __name__ == '__main__' :
     from arrlp import debug_array
-    func = arr_function
+    func = img_fft
 
     # Arguments
     kwargs = dict(

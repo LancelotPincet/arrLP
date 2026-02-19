@@ -14,15 +14,12 @@ Compresses an array between values by normalizing, with possibility to saturate 
 
 # %% Libraries
 import numpy as np
-try :
-    import cupy as cp
-except ImportError :
-    cp = None
+from arrlp import get_xp
 
 
 
 # %% Function
-def compress(array, /, max=1, min=0, *, dtype=None, white=None, black=None, white_percent=None, black_percent=None, saturate=None, cuda=False) :
+def compress(array, /, max=1, min=0, *, dtype=None, white=None, black=None, white_percent=None, black_percent=None, saturate=None) :
     '''
     Compresses an array between values by normalizing, with possibility to saturate extrema.
     
@@ -46,8 +43,6 @@ def compress(array, /, max=1, min=0, *, dtype=None, white=None, black=None, whit
         black percentage distribution in input if black is None.
     saturate : Any or bool or None
         If True, will saturate values above white and black. If Any, will replace by this value. If None no saturation.
-    cuda : bool
-        True to apply cuda.
 
     Returns
     -------
@@ -67,7 +62,7 @@ def compress(array, /, max=1, min=0, *, dtype=None, white=None, black=None, whit
     '''
 
     # init
-    xp = cp if cuda and cp is not None else np
+    xp = get_xp(array)
     array = xp.asarray(array)
     if dtype is None :
         dtype = array.dtype

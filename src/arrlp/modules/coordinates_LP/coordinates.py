@@ -14,10 +14,7 @@ This function will return a ndarray corresponding to the coordinates array of th
 
 # %% Libraries
 import numpy as np
-try :
-    import cupy as cp
-except ImportError :
-    cp = None
+from arrlp import get_xp
 
 
 
@@ -67,7 +64,7 @@ def coordinates(shape, pixel=1., *, ndims=1, center=True, grid=False, origin=0.,
     >>> coordinates = coordinates(array, pixel=10, center=(True, False), grid=False, origin=(0,3))
     ... array([[-20.], [-10.], [0.], [10.], [20.]]), array([[3., 13., 23., 33.]])
     '''
-    xp = cp if cuda and cp is not None else np
+    xp = get_xp(cuda)
 
     # Manage shape argument
     if isinstance(shape, int) :
