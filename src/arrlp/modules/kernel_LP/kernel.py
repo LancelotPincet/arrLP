@@ -132,7 +132,7 @@ def kernel_mask(window, pixel=1, ndims=1, shape=None) :
     # Calculates distance from origin in windows
     k = np.ones(shape)
     r2 = 0 # (r/window)²
-    for coord, win, pix in zip(coords, window, pixel) :
+    for coord, win in zip(coords, window) :
         r2 = r2 + (coord / win)**2
 
     # Apply mask

@@ -12,12 +12,12 @@ Here are the references to the various modules to import in **arrLP**.
    :caption: Modules
 
    relabel
-   compress
    kernel
-   volume
-   debug_array
-   image
    get_xp
-   coordinates
-   FunctionArray
    signal
+   coordinates
+   compress
+   debug_array
+   FunctionArray
+   volume
+   image
