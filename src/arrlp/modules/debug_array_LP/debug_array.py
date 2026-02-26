@@ -108,7 +108,7 @@ def debug_array(func, modes, **kwargs) :
             ref = None
             for key, value in modes.items():
                 parallel, cuda = value["parallel"], value["cuda"]
-                if (not channels and not stacks) and (parallel or cuda) : continue
+                if (not channels and not stacks) and parallel and func.use_joblib : continue
                 results[key] = timeit(key, array, stacks, channels, **value)
                 if ref is None :
                     ref = key

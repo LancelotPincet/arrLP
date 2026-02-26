@@ -17,7 +17,7 @@ def _vol_ifft(self, out, array, **kwargs) :
     return self.scipyx.fft.ifftn(self.scipyx.fft.ifftshift(array, axes=self.axes), axes=self.axes, **kwargs)
 
 def par_vol_ifft(self, out, array, **kwargs) :
-    return self.scipyx.fft.ifftn(self.scipyx.fft.ifftshift(array, axes=self.axes), axes=self.axes, workers=-1, **kwargs)
+    return self.scipyx.fft.ifftn(self.scipyx.fft.ifftshift(array, axes=self.axes), axes=self.axes, workers=self.parallel, **kwargs)
 
 
 

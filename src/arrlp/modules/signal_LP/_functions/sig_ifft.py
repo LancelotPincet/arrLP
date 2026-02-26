@@ -17,7 +17,7 @@ def _sig_ifft(self, out, array, **kwargs) :
     return self.scipyx.fft.ifft(self.scipyx.fft.ifftshift(array, axes=self.axes), axis=self.axes[0], **kwargs)
 
 def par_sig_ifft(self, out, array, **kwargs) :
-    return self.scipyx.fft.ifft(self.scipyx.fft.ifftshift(array, axes=self.axes), axis=self.axes[0], workers=-1, **kwargs)
+    return self.scipyx.fft.ifft(self.scipyx.fft.ifftshift(array, axes=self.axes), axis=self.axes[0], workers=self.parallel, **kwargs)
 
 
 

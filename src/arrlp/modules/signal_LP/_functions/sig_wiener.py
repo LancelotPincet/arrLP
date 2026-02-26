@@ -43,8 +43,8 @@ def _sig_wiener(self, out, array, W, kernel, power=2, balance=10**2, **kwargs) :
 
 def par_sig_wiener(self, out, array, W, kernel, power=2, balance=10**2, **kwargs) :
     dtype = array.dtype
-    fft = self.scipyx.fft.fftshift(self.scipyx.fft.fft(array, axis=self.axes[0], workers=-1, **kwargs), axes=self.axes)
-    return self.xp.real(self.scipyx.fft.ifft(self.scipyx.fft.ifftshift(fft * W, axes=self.axes), axis=self.axes[0], workers=-1, **kwargs)).astype(dtype)
+    fft = self.scipyx.fft.fftshift(self.scipyx.fft.fft(array, axis=self.axes[0], workers=self.parallel, **kwargs), axes=self.axes)
+    return self.xp.real(self.scipyx.fft.ifft(self.scipyx.fft.ifftshift(fft * W, axes=self.axes), axis=self.axes[0], workers=self.parallel, **kwargs)).astype(dtype)
 
 
 

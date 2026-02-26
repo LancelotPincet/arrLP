@@ -19,12 +19,14 @@ import numpy as np
 import scipy
 from joblib import Parallel, delayed
 from numba import njit, prange
+import skimage
 
 # Check cupy
 try :
     import cupy as cp
     import cupyx.scipy as cupyx_scipy
     from cupyx.scipy import ndimage as cupyx_ndimage
+    import cucim.skimage as cucim_skimage
 except ImportError :
     cp = None
 
@@ -131,6 +133,7 @@ class FunctionArray() :
         '''
 
         # checks
+        if parallel is True : parallel = -1
         self.checks(out, stacks, channels, parallel, cuda, test)
         self.stacks, self.channels, self.parallel, self.cuda = stacks, channels, parallel, cuda
         out = out if out is not None else self.out_function(self, array, *args, **kwargs) if self.out_function is not None else None
@@ -174,6 +177,9 @@ class FunctionArray() :
     @property
     def ndimage(self) :
         return cupyx_ndimage if self.cuda else scipy.ndimage
+    @property
+    def skimagex(self) :
+        return cucim_skimage if self.cuda else skimage
 
 
 
@@ -257,16 +263,16 @@ class FunctionArray() :
             case (False, False) :
                 raise SyntaxError('This parallel scenario with no stack nor channel should not exist. [should be corrected in checks]')
             case (True, False) :
-                copy = Parallel(n_jobs=-1, backend="loky")(delayed(func)(self, array[i], *(arg[i] for arg in args), **kwargs) for i in range(nstacks))
+                copy = Parallel(n_jobs=self.parallel, backend="loky")(delayed(func)(self, array[i], *(arg[i] for arg in args), **kwargs) for i in range(nstacks))
                 if out is None : out = np.empty_like(copy[0], shape=(len(copy), *copy[0].shape))
                 return copystacks(list(copy), out)
             case (False, True) :
-                copy = Parallel(n_jobs=-1, backend="loky")(delayed(func)(self, array[..., i], *(arg[..., i] for arg in args), **kwargs) for i in range(nchannels))
+                copy = Parallel(n_jobs=self.parallel, backend="loky")(delayed(func)(self, array[..., i], *(arg[..., i] for arg in args), **kwargs) for i in range(nchannels))
                 if out is None : out = np.empty_like(copy[0], shape=(*copy[0].shape, len(copy)))
                 return copychannels(list(copy), out)
             case (True, True) :
                 newfunc = lambda self, array, *args, **kwargs : [func(self, array[..., j], *(arg[..., j] for arg in args), **kwargs) for j in range(nchannels)]
-                copy = Parallel(n_jobs=-1, backend="loky")(delayed(newfunc)(self, array[i], *(arg[i] for arg in args), **kwargs) for i in range(nstacks))
+                copy = Parallel(n_jobs=self.parallel, backend="loky")(delayed(newfunc)(self, array[i], *(arg[i] for arg in args), **kwargs) for i in range(nstacks))
                 if out is None : out = np.empty_like(copy[0][0], shape=(len(copy), *copy[0][0].shape, len(copy[0])))
                 return copystacksnchannels(list(copy), out)
             

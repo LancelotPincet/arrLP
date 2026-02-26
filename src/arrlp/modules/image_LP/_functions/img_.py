@@ -14,9 +14,9 @@ from arrlp import FunctionArray
 
 # Initializations
 def ini_arr_function(self, array, **kwargs) :
-    return dict() # return values in this dict will be passed as kwargs in cpu/par/gpu functions 
+    return dict()
 
-def out_arr_function(self, array, **kwargs) : # To delete if wrapped functions does not allow inplace output
+def out_arr_function(self, array, **kwargs) :
     return self.xp.empty_like(array)
 
 def cpu_arr_function(self, out, array, **kwargs) :
@@ -44,7 +44,7 @@ arr_function = FunctionArray(
     # Loops
     cpu_loop = False,
     par_loop = False,
-    gpu_loop = False, # True usually make bad GPU performance, check first if there is no ndimension support, and also try investigating reshaping
+    gpu_loop = False,
     use_joblib = True, # If True, arguments of parallel function should not have "out".
 
     # Performances

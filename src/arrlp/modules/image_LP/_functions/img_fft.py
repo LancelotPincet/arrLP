@@ -17,7 +17,7 @@ def _img_fft(self, out, array, **kwargs) :
     return self.scipyx.fft.fftshift(self.scipyx.fft.fft2(array, axes=self.axes, **kwargs), axes=self.axes)
 
 def par_img_fft(self, out, array, **kwargs) :
-    return self.scipyx.fft.fftshift(self.scipyx.fft.fft2(array, axes=self.axes, workers=-1, **kwargs), axes=self.axes)
+    return self.scipyx.fft.fftshift(self.scipyx.fft.fft2(array, axes=self.axes, workers=self.parallel, **kwargs), axes=self.axes)
 
 
 

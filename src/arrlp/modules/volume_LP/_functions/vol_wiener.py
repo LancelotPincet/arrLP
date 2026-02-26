@@ -55,8 +55,8 @@ def _vol_wiener(self, out, array, W, kernel, power=2, balance=10**2, **kwargs) :
 
 def par_vol_wiener(self, out, array, W, kernel, power=2, balance=10**2, **kwargs) :
     dtype = array.dtype
-    fft = self.scipyx.fft.fftshift(self.scipyx.fft.fftn(array, axes=self.axes, workers=-1, **kwargs), axes=self.axes)
-    return self.xp.real(self.scipyx.fft.ifftn(self.scipyx.fft.ifftshift(fft * W, axes=self.axes), axes=self.axes, workers=-1, **kwargs)).astype(dtype)
+    fft = self.scipyx.fft.fftshift(self.scipyx.fft.fftn(array, axes=self.axes, workers=self.parallel, **kwargs), axes=self.axes)
+    return self.xp.real(self.scipyx.fft.ifftn(self.scipyx.fft.ifftshift(fft * W, axes=self.axes), axes=self.axes, workers=self.parallel, **kwargs)).astype(dtype)
 
 
 
