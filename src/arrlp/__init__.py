@@ -26,7 +26,6 @@ sources = {
 'img_wiener': 'arrlp.modules.image_LP._functions.img_wiener',
 'img_': 'arrlp.modules.image_LP._functions.img_',
 'img_correlate': 'arrlp.modules.image_LP._functions.img_correlate',
-'img_wiener copy': 'arrlp.modules.image_LP._functions.img_wiener copy',
 'img_fft': 'arrlp.modules.image_LP._functions.img_fft',
 'img_convolve1d': 'arrlp.modules.image_LP._functions.img_convolve1d',
 'img_ifft': 'arrlp.modules.image_LP._functions.img_ifft',

@@ -133,9 +133,11 @@ class FunctionArray() :
         '''
 
         # checks
+        if iterator is None : iterator = range
         if parallel is True : parallel = -1
         self.checks(out, stacks, channels, parallel, cuda, test)
         self.stacks, self.channels, self.parallel, self.cuda = stacks, channels, parallel, cuda
+        array = self.xp.asarray(array)
         out = out if out is not None else self.out_function(self, array, *args, **kwargs) if self.out_function is not None else None
         if self.ini_function is not None :
             kwargs.update(self.ini_function(self, array, *args, **kwargs))

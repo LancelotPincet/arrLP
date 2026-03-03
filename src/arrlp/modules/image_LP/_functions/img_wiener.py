@@ -13,17 +13,44 @@ from arrlp import FunctionArray
 # %% Function
 
 # Initializations
-def ini_img_wiener(self, array, kernel, **kwargs) :
+def ini_img_wiener(self, array, kernel, power=2, balance=10**2, **kwargs) :
     kernel = self.xp.asarray(kernel)
+    axes = self.axes
+    Y, X = array.shape[axes[0]], array.shape[axes[1]]
+    pad_y_total = Y - kernel.shape[0]
+    if pad_y_total < 0 :
+        start = -pad_y_total // 2
+        kernel = kernel[start:start + Y, :]
+        pad_y_total = 0
+    pad_x_total = X - kernel.shape[1]
+    if pad_x_total < 0 :
+        start = -pad_x_total // 2
+        kernel = kernel[:, start:start + X]
+        pad_x_total = 0
+    pad_y = (pad_y_total // 2, pad_y_total - pad_y_total // 2)
+    pad_x = (pad_x_total // 2, pad_x_total - pad_x_total // 2)
+    padded = self.xp.pad(kernel, (pad_y, pad_x), mode='constant')
+    fft_kernel = self.xp.abs(self.scipyx.fft.fftshift(self.scipyx.fft.fft2(padded)))
+    W = fft_kernel**(power-1) / (fft_kernel**power + fft_kernel.max() / balance)
+    if self.stacks and self.channels :
+        W = W.reshape((1, *W.shape, 1))
+    elif self.stacks :
+        W = W.reshape((1, *W.shape))
+    elif self.channels :
+        W = W.reshape((*W.shape, 1))
     return dict(
-        kernel=kernel,
+        W=W,
     )
 
-def _img_wiener(self, out, array, kernel, balance=10**2, **kwargs) :
-    return self.skimagex.restoration.wiener(array, kernel, balance, **kwargs)
+def _img_wiener(self, out, array, W, kernel, power=2, balance=10**2, **kwargs) :
+    dtype = array.dtype
+    fft = self.scipyx.fft.fftshift(self.scipyx.fft.fft2(array, axes=self.axes, **kwargs), axes=self.axes)
+    return self.xp.real(self.scipyx.fft.ifft2(self.scipyx.fft.ifftshift(fft * W, axes=self.axes), axes=self.axes, **kwargs)).astype(dtype)
 
-def par_img_wiener(self, array, kernel, balance=10**2, **kwargs) :
-    return self.skimagex.restoration.wiener(array, kernel, balance, **kwargs)
+def par_img_wiener(self, out, array, W, kernel, power=2, balance=10**2, **kwargs) :
+    dtype = array.dtype
+    fft = self.scipyx.fft.fftshift(self.scipyx.fft.fft2(array, axes=self.axes, workers=self.parallel, **kwargs), axes=self.axes)
+    return self.xp.real(self.scipyx.fft.ifft2(self.scipyx.fft.ifftshift(fft * W, axes=self.axes), axes=self.axes, workers=self.parallel, **kwargs)).astype(dtype)
 
 
 
@@ -39,10 +66,7 @@ img_wiener = FunctionArray(
     ini_function = ini_img_wiener,
 
     # Loops
-    cpu_loop = True,
-    par_loop = True,
-    gpu_loop = True, # True usually make bad GPU performance, check first if there is no ndimension support, and also try investigating reshaping
-    use_joblib = True, # If True, arguments of parallel function should not have "out".
+    use_joblib = False, # If True, arguments of parallel function should not have "out".
 
     # Performances
     remove_parallel = False,
