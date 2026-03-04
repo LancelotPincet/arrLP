@@ -24,7 +24,7 @@ import warnings
 
 
 # %% Function
-def debug_array(func, modes, **kwargs) :
+def debug_array(func, modes, stacks_list=None, channels_list=None, **kwargs) :
     f'''
     This function allows to debug array functions while comparing various modes.
     
@@ -34,6 +34,10 @@ def debug_array(func, modes, **kwargs) :
         function to test.
     modes : dict
         dict of dicts corresponding to various modes that should give same results.
+    stacks_list : list
+        List of stacks bools to test, must same size as channels_list.
+    channels_list : list
+        List of channels bools to test, must same size as stacks_list.
     **kwargs : dict
         constant keyword arguments.
 
@@ -86,44 +90,45 @@ def debug_array(func, modes, **kwargs) :
 
 
     # Loops
-    for channels in [False, True] :
-        for stacks in [False, True] :
+    if channels_list is None : channels_list = [False, False, True, True]
+    if stacks_list is None : stacks_list = [False, True, False, True]
+    for channels, stacks in zip(channels_list, stacks_list) :
 
-            print(f'\nTesting for stacks={stacks} and channels={channels}')
+        print(f'\nTesting for stacks={stacks} and channels={channels}')
 
-            # Array
-            match stacks, channels :
-                case (True, True) :
-                    _shape = (nstacks, *shape, nchannels)
-                case(True, False) :
-                    _shape = (nstacks, *shape)
-                case(False, True) :
-                    _shape = (*shape, nchannels)
-                case(False, False) :
-                    _shape = shape
-            array = np.random.random(_shape)
+        # Array
+        match stacks, channels :
+            case (True, True) :
+                _shape = (nstacks, *shape, nchannels)
+            case(True, False) :
+                _shape = (nstacks, *shape)
+            case(False, True) :
+                _shape = (*shape, nchannels)
+            case(False, False) :
+                _shape = shape
+        array = np.random.random(_shape)
 
-            # Calculate
-            results = {}
-            ref = None
-            for key, value in modes.items():
-                parallel, cuda = value["parallel"], value["cuda"]
-                if (not channels and not stacks) and parallel and func.use_joblib : continue
-                results[key] = timeit(key, array, stacks, channels, **value)
-                if ref is None :
-                    ref = key
-            
-            # Compare
-            for key, value in results.items():
-                if key == ref : continue
-                print(f"\rChecking correctness vs reference: {key}" + " "*(60-34-len(key)), end='')
-                np.testing.assert_allclose(
-                    results[ref], results[key],
-                    rtol=1e-4,
-                    atol=1e-5,
-                    err_msg="Outputs differ between optimizations"
-                )
-            print('\r'+' '*60+'\n')
+        # Calculate
+        results = {}
+        ref = None
+        for key, value in modes.items():
+            parallel, cuda = value["parallel"], value["cuda"]
+            if (not channels and not stacks) and parallel and func.use_joblib : continue
+            results[key] = timeit(key, array, stacks, channels, **value)
+            if ref is None :
+                ref = key
+        
+        # Compare
+        for key, value in results.items():
+            if key == ref : continue
+            print(f"\rChecking correctness vs reference: {key}" + " "*(60-34-len(key)), end='')
+            np.testing.assert_allclose(
+                results[ref], results[key],
+                rtol=1e-4,
+                atol=1e-5,
+                err_msg="Outputs differ between optimizations"
+            )
+        print('\r'+' '*60+'\n')
 
 
 

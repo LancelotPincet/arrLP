@@ -20,6 +20,7 @@ sources = {
 'get_xp': 'arrlp.modules.get_xp_LP.get_xp',
 'image': 'arrlp.modules.image_LP.image',
 'kernel': 'arrlp.modules.kernel_LP.kernel',
+'nb_threads': 'arrlp.modules.nb_threads_LP.nb_threads',
 'relabel': 'arrlp.modules.relabel_LP.relabel',
 'signal': 'arrlp.modules.signal_LP.signal',
 'volume': 'arrlp.modules.volume_LP.volume',
