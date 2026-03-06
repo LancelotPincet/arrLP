@@ -90,11 +90,11 @@ def compress(array, /, max=1, min=0, *, dtype=None, white=None, black=None, whit
     # Saturation
     if saturate is not None :
         if saturate is True :
-            sat_min, sat_max = min, max
+            sat_min, sat_max = black, white
         else :
             sat_min, sat_max = saturate, saturate
-        array[array>max] = sat_max
-        array[array<min] = sat_min
+        array[array>white] = sat_max
+        array[array<black] = sat_min
     
     return array.astype(dtype)
 
