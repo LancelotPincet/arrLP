@@ -43,7 +43,7 @@ def kernel(ndims=2, pixel=1, *, dtype=np.float32, shape=None, cuda=False, atrou=
     atrou : int
         Number of trou to put for atrou algorithm, None for normal kernel.
     window : float
-        Size of window for mask kernel.
+        Size of window for mask kernel (diameter).
     sigma : float
         Size of sigma for gaussian kernel.
     wl : float

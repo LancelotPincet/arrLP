@@ -6,12 +6,7 @@
 
 
 # %% Libraries
-from arrlp import img_correlate
-import numpy as np
-try :
-    import cupy as cp
-except ImportError :
-    cp = None
+from arrlp import img_correlate, get_xp
 
 
 
@@ -20,7 +15,7 @@ def img_convolve(array, *, kernel, out=None, # Arrays
         stacks=False, channels=False, parallel=False, cuda=False, test=False, iterator=range, # Modes
         **kwargs) :
 
-    xp = cp if cuda and cp is not None else np
+    xp = get_xp(cuda)
     for dim in range(2) :
         kernel = xp.flip(kernel, axis=dim)
         

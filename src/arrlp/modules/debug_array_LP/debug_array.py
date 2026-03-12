@@ -24,7 +24,7 @@ import warnings
 
 
 # %% Function
-def debug_array(func, modes, stacks_list=None, channels_list=None, **kwargs) :
+def debug_array(func, modes, stacks_list=None, channels_list=None, narrays=1, **kwargs) :
     f'''
     This function allows to debug array functions while comparing various modes.
     
@@ -38,6 +38,8 @@ def debug_array(func, modes, stacks_list=None, channels_list=None, **kwargs) :
         List of stacks bools to test, must same size as channels_list.
     channels_list : list
         List of channels bools to test, must same size as stacks_list.
+    narrays : int
+        Number of input arrays.
     **kwargs : dict
         constant keyword arguments.
 
@@ -68,20 +70,20 @@ def debug_array(func, modes, stacks_list=None, channels_list=None, **kwargs) :
 
 
     # Timeit function
-    def timeit(key, array, stacks, channels, parallel, cuda, **kw) :
+    def timeit(key, arrays, stacks, channels, parallel, cuda, **kw) :
 
         # Init
         xp = cp if cuda else np
-        array = xp.asarray(array)
+        arrays = [xp.asarray(array) for array in arrays]
 
         # Calculate
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             print('Compile run...', end='')
-            func(array, stacks=stacks, channels=channels, parallel=parallel, cuda=cuda, test=True, **kwargs, **kw)
+            func(*arrays, stacks=stacks, channels=channels, parallel=parallel, cuda=cuda, test=True, **kwargs, **kw)
             print('\rRun...        ', end='')
             tic = perf_counter()
-            out = func(array, stacks=stacks, channels=channels, parallel=parallel, cuda=cuda, test=True, **kwargs, **kw)
+            out = func(*arrays, stacks=stacks, channels=channels, parallel=parallel, cuda=cuda, test=True, **kwargs, **kw)
             toc = perf_counter()
             print(f'\r{key} took {(toc-tic)*1000:.3f}ms      ')
             if cuda : out = xp.asnumpy(out)
@@ -106,15 +108,15 @@ def debug_array(func, modes, stacks_list=None, channels_list=None, **kwargs) :
                 _shape = (*shape, nchannels)
             case(False, False) :
                 _shape = shape
-        array = np.random.random(_shape)
+        arrays = [np.random.random(_shape) for _ in range(narrays)]
 
         # Calculate
         results = {}
         ref = None
         for key, value in modes.items():
-            parallel, cuda = value["parallel"], value["cuda"]
-            if (not channels and not stacks) and parallel and func.use_joblib : continue
-            results[key] = timeit(key, array, stacks, channels, **value)
+            parallel = value['parallel']
+            if (not channels and not stacks) and parallel and hasattr(func, "use_joblib") and func.use_joblib : continue
+            results[key] = timeit(key, arrays, stacks, channels, **value)
             if ref is None :
                 ref = key
         

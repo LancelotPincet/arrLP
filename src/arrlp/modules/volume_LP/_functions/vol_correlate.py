@@ -19,7 +19,7 @@ def ini_vol_correlate(self, array, kernel, **kwargs) :
     )
 
 def out_vol_correlate(self, array, **kwargs) :
-    return self.xp.empty_like(array)
+    return self.xp.empty_like(array, dtype=self.xp.float32)
 
 def _vol_correlate(self, out, array, kernel, mode='nearest', **kwargs) :
     return self.ndimage.correlate(array, weights=kernel, axes=self.axes, output=out, mode=mode, **kwargs)

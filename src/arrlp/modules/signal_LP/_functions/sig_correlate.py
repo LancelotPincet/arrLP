@@ -19,7 +19,7 @@ def ini_sig_correlate(self, array, kernel, **kwargs) :
     )
 
 def out_sig_correlate(self, array, **kwargs) :
-    return self.xp.empty_like(array)
+    return self.xp.empty_like(array, dtype=self.xp.float32)
 
 def _sig_correlate(self, out, array, kernel, mode='nearest', **kwargs) :
     return self.ndimage.correlate1d(array, weights=kernel, axis=self.axes[0], output=out, mode=mode, **kwargs)

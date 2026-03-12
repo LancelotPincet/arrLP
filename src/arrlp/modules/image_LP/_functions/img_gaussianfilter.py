@@ -37,7 +37,7 @@ if __name__ == '__main__' :
 
     # Arguments
     kwargs = dict(
-        sigma=3.,
+        sigma=50.,
     )
 
     # Modes

@@ -19,7 +19,7 @@ def ini_img_correlate1d(self, array, kernel, **kwargs) :
     )
 
 def out_img_correlate1d(self, array, **kwargs) :
-    return self.xp.empty_like(array)
+    return self.xp.empty_like(array, dtype=self.xp.float32)
 
 def cpu_img_correlate1d(self, out, array, kernel, mode='nearest', **kwargs) :
     return self.ndimage.correlate1d(self.ndimage.correlate1d(array, weights=kernel[0], output=out, axis=self.axes[0], mode=mode), weights=kernel[1], output=out, axis=self.axes[1], mode=mode, **kwargs)
@@ -48,7 +48,7 @@ img_correlate1d = FunctionArray(
     use_joblib = True, # If True, arguments of parallel function should not have "out".
 
     # Performances
-    remove_parallel = True,
+    remove_parallel = False,
     remove_cuda = False,
 
 )

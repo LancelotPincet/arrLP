@@ -135,12 +135,14 @@ class FunctionArray() :
         # checks
         if iterator is None : iterator = range
         if parallel is True : parallel = -1
+        if parallel == 1 : parallel = False
         self.checks(out, stacks, channels, parallel, cuda, test)
         self.stacks, self.channels, self.parallel, self.cuda = stacks, channels, parallel, cuda
         array = self.xp.asarray(array)
-        out = out if out is not None else self.out_function(self, array, *args, **kwargs) if self.out_function is not None else None
+        args = [self.xp.asarray(arg) for arg in args]
         if self.ini_function is not None :
             kwargs.update(self.ini_function(self, array, *args, **kwargs))
+        out = out if out is not None else self.out_function(self, array, *args, **kwargs) if self.out_function is not None else None
 
         # Cuda
         if cuda :
@@ -182,6 +184,9 @@ class FunctionArray() :
     @property
     def skimagex(self) :
         return cucim_skimage if self.cuda else skimage
+    def shape(self, array) : # function of array
+        start = int(self.stacks)
+        return array.shape[start:start + self.ndims]
 
 
 

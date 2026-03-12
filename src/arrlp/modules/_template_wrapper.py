@@ -6,12 +6,7 @@
 
 
 # %% Libraries
-from arrlp import arr_function
-import numpy as np
-try :
-    import cupy as cp
-except ImportError :
-    cp = None
+from arrlp import arr_function, get_xp
 
 
 
@@ -20,7 +15,7 @@ def arr_wrapper(array, *, out=None, # Arrays
         stacks=False, channels=False, parallel=False, cuda=False, test=False, iterator=range, # Modes
         **kwargs) :
 
-    xp = cp if cuda and cp is not None else np
+    xp = get_xp(cuda)
         
     return arr_function(array, out=out, stacks=stacks, channels=channels, parallel=parallel, cuda=cuda, test=test, iterator=iterator, **kwargs)
 arr_wrapper.ndims = 2

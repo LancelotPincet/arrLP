@@ -93,7 +93,7 @@ def coordinates(shape, pixel=1., *, ndims=1, center=True, grid=False, origin=0.,
 
     #Meshgrid
     if grid and ndims != 1 :
-        return xp.meshgrid(*coords, indexing='ij')
+        return xp.meshgrid(*[coord.squeeze() for coord in coords], indexing='ij')
     else :
         return coords
 

@@ -11,15 +11,15 @@ Here are the references to the various modules to import in **arrLP**.
    :maxdepth: 1
    :caption: Modules
 
-   nb_threads
    relabel
-   compress
-   gc
    kernel
-   volume
-   debug_array
-   image
    get_xp
-   coordinates
-   FunctionArray
+   gc
    signal
+   coordinates
+   compress
+   debug_array
+   FunctionArray
+   nb_threads
+   volume
+   image

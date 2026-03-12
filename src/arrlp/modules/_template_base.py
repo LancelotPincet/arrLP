@@ -17,7 +17,7 @@ def ini_arr_function(self, array, **kwargs) :
     return dict() # return values in this dict will be passed as kwargs in cpu/par/gpu functions 
 
 def out_arr_function(self, array, **kwargs) : # To delete if wrapped functions does not allow inplace output
-    return self.xp.empty_like(array)
+    return self.xp.empty_like(array, dtype=self.xp.float32)
 
 def cpu_arr_function(self, out, array, **kwargs) :
     return out # TODO

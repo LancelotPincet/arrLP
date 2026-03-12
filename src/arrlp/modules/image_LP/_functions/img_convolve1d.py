@@ -6,12 +6,7 @@
 
 
 # %% Libraries
-from arrlp import img_correlate1d
-import numpy as np
-try :
-    import cupy as cp
-except ImportError :
-    cp = None
+from arrlp import img_correlate1d, get_xp
 
 
 
@@ -20,7 +15,7 @@ def img_convolve1d(array, *, kernel, out=None, # Arrays
         stacks=False, channels=False, parallel=False, cuda=False, test=False, iterator=range, # Modes
         **kwargs) :
 
-    xp = cp if cuda and cp is not None else np
+    xp = get_xp(cuda)
     kernel = [xp.flip(k, axis=0) for k in kernel]        
     return img_correlate1d(array, kernel=kernel, out=out, stacks=stacks, channels=channels, parallel=parallel, cuda=cuda, test=test, iterator=iterator, **kwargs)
 img_convolve1d.ndims = 2
