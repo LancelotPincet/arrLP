@@ -13,7 +13,7 @@ from arrlp import FunctionArray
 # %% Function
 
 # Initializations
-def ini_vol_correlate1d(self, array, kernel, **kwargs) :
+def ini_vol_correlate1d(self, array, *, kernel, **kwargs) :
     return dict(
         kernel=(self.xp.asarray(kernel[0]), self.xp.asarray(kernel[1]), self.xp.asarray(kernel[2])), # z, y, x
     )
@@ -21,13 +21,13 @@ def ini_vol_correlate1d(self, array, kernel, **kwargs) :
 def out_vol_correlate1d(self, array, **kwargs) :
     return self.xp.empty_like(array, dtype=self.xp.float32)
 
-def cpu_vol_correlate1d(self, out, array, kernel, mode='nearest', **kwargs) :
+def cpu_vol_correlate1d(self, out, array, *, kernel, mode='nearest', **kwargs) :
     return self.ndimage.correlate1d(self.ndimage.correlate1d(self.ndimage.correlate1d(array, weights=kernel[0], output=out, axis=self.axes[0], mode=mode), weights=kernel[1], output=out, axis=self.axes[1], mode=mode), weights=kernel[2], output=out, axis=self.axes[2], mode=mode, **kwargs)
 
-def par_vol_correlate1d(self, array, kernel, mode='nearest', **kwargs) :
+def par_vol_correlate1d(self, array, *, kernel, mode='nearest', **kwargs) :
     return self.ndimage.correlate1d(self.ndimage.correlate1d(self.ndimage.correlate1d(array, weights=kernel[0], axis=0, mode=mode), weights=kernel[1], axis=1, mode=mode), weights=kernel[2], axis=2, mode=mode, **kwargs)
 
-def gpu_vol_correlate1d(self, out, array, kernel, mode='nearest', **kwargs) :
+def gpu_vol_correlate1d(self, out, array, *, kernel, mode='nearest', **kwargs) :
     return self.ndimage.correlate1d(self.ndimage.correlate1d(self.ndimage.correlate1d(array, weights=kernel[0], axis=self.axes[0], mode=mode), weights=kernel[1], axis=self.axes[1], mode=mode), weights=kernel[2], axis=self.axes[2], mode=mode, output=out, **kwargs) # First call must be allocated into a temporary buffer (output=None)
 
 

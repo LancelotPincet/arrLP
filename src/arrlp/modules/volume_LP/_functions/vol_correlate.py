@@ -13,7 +13,7 @@ from arrlp import FunctionArray
 # %% Function
 
 # Initializations
-def ini_vol_correlate(self, array, kernel, **kwargs) :
+def ini_vol_correlate(self, array, *, kernel, **kwargs) :
     return dict(
         kernel=self.xp.asarray(kernel),
     )
@@ -21,10 +21,10 @@ def ini_vol_correlate(self, array, kernel, **kwargs) :
 def out_vol_correlate(self, array, **kwargs) :
     return self.xp.empty_like(array, dtype=self.xp.float32)
 
-def _vol_correlate(self, out, array, kernel, mode='nearest', **kwargs) :
+def _vol_correlate(self, out, array, *, kernel, mode='nearest', **kwargs) :
     return self.ndimage.correlate(array, weights=kernel, axes=self.axes, output=out, mode=mode, **kwargs)
 
-def par_vol_correlate(self, array, kernel, mode='nearest', **kwargs) :
+def par_vol_correlate(self, array, *, kernel, mode='nearest', **kwargs) :
     return self.ndimage.correlate(array, weights=kernel, mode=mode, **kwargs)
 
 

@@ -13,7 +13,7 @@ from arrlp import FunctionArray, coordinates
 # %% Function
 
 # Initializations
-def ini_img_radialproj(self, array, pixel=1., **kwargs) :
+def ini_img_radialproj(self, array, *, pixel=1., **kwargs) :
     try :
         if len(pixel) != 2 :
             raise ValueError('pixel cannot have other than 2 values in tuple')
@@ -25,11 +25,11 @@ def ini_img_radialproj(self, array, pixel=1., **kwargs) :
     rsum = self.xp.bincount(R.ravel())
     return dict(R=R, rsum=rsum) # return values in this dict will be passed as kwargs in cpu/par/gpu functions 
 
-def _img_radialproj(self, out, array, R, rsum, **kwargs) :
+def _img_radialproj(self, out, array, *, R, rsum, **kwargs) :
     psum = self.xp.bincount(R, weights=array.ravel())
     return psum / rsum
 
-def par_img_radialproj(self, array, R, rsum, **kwargs) :
+def par_img_radialproj(self, array, *, R, rsum, **kwargs) :
     psum = self.xp.bincount(R, weights=array.ravel())
     return psum / rsum
 

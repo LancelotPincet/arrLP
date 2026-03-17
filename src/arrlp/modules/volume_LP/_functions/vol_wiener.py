@@ -13,7 +13,7 @@ from arrlp import FunctionArray
 # %% Function
 
 # Initializations
-def ini_vol_wiener(self, array, kernel, power=2, balance=10**2, **kwargs) :
+def ini_vol_wiener(self, array, *, kernel, power=2, balance=10**2, **kwargs) :
     kernel = self.xp.asarray(kernel)
     axes = self.axes
     Z, Y, X = array.shape[axes[0]], array.shape[axes[1]], array.shape[axes[2]]
@@ -48,12 +48,12 @@ def ini_vol_wiener(self, array, kernel, power=2, balance=10**2, **kwargs) :
         W=W,
     )
 
-def _vol_wiener(self, out, array, W, kernel, power=2, balance=10**2, **kwargs) :
+def _vol_wiener(self, out, array, *, W, kernel, power=2, balance=10**2, **kwargs) :
     dtype = array.dtype
     fft = self.scipyx.fft.fftshift(self.scipyx.fft.fftn(array, axes=self.axes, **kwargs), axes=self.axes)
     return self.xp.real(self.scipyx.fft.ifftn(self.scipyx.fft.ifftshift(fft * W, axes=self.axes), axes=self.axes, **kwargs)).astype(dtype)
 
-def par_vol_wiener(self, out, array, W, kernel, power=2, balance=10**2, **kwargs) :
+def par_vol_wiener(self, out, array, *, W, kernel, power=2, balance=10**2, **kwargs) :
     dtype = array.dtype
     fft = self.scipyx.fft.fftshift(self.scipyx.fft.fftn(array, axes=self.axes, workers=self.parallel, **kwargs), axes=self.axes)
     return self.xp.real(self.scipyx.fft.ifftn(self.scipyx.fft.ifftshift(fft * W, axes=self.axes), axes=self.axes, workers=self.parallel, **kwargs)).astype(dtype)

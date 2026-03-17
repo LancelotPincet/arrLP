@@ -13,7 +13,7 @@ from arrlp import FunctionArray
 # %% Function
 
 # Initializations
-def ini_sig_greyopening(self, array, structure=None, footprint=None, **kwargs) :
+def ini_sig_greyopening(self, array, *, structure=None, footprint=None, **kwargs) :
     return dict(
         structure = None if structure is None else self.xp.asarray(structure),
         footprint = None if footprint is None else self.xp.asarray(footprint),
@@ -22,10 +22,10 @@ def ini_sig_greyopening(self, array, structure=None, footprint=None, **kwargs) :
 def out_sig_greyopening(self, array, **kwargs) :
     return self.xp.empty_like(array, dtype=self.xp.float32)
 
-def _sig_greyopening(self, out, array, structure, footprint, mode='nearest', **kwargs) :
+def _sig_greyopening(self, out, array, *, structure, footprint, mode='nearest', **kwargs) :
     return self.ndimage.grey_opening(array, structure=structure, footprint=footprint, axes=self.axes, output=out, mode=mode, **kwargs)
 
-def par_sig_greyopening(self, array, structure, footprint, mode='nearest', **kwargs) :
+def par_sig_greyopening(self, array, *, structure, footprint, mode='nearest', **kwargs) :
     return self.ndimage.grey_opening(array, structure=structure, footprint=footprint, mode=mode, **kwargs)
 
 
