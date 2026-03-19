@@ -24,6 +24,7 @@ sources = {
 'nb_threads': 'arrlp.modules.nb_threads_LP.nb_threads',
 'relabel': 'arrlp.modules.relabel_LP.relabel',
 'signal': 'arrlp.modules.signal_LP.signal',
+'sortloop': 'arrlp.modules.sortloop_LP.sortloop',
 'volume': 'arrlp.modules.volume_LP.volume',
 'img_greyopening': 'arrlp.modules.image_LP._functions.img_greyopening',
 'img_radialproj': 'arrlp.modules.image_LP._functions.img_radialproj',

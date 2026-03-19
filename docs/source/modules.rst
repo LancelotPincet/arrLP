@@ -15,6 +15,7 @@ Here are the references to the various modules to import in **arrLP**.
    kernel
    get_xp
    gc
+   sortloop
    signal
    coordinates
    compress

@@ -134,6 +134,7 @@ class FunctionArray() :
 
         # checks
         if iterator is None : iterator = range
+        if cuda : parallel = False
         if parallel is True : parallel = -1
         if parallel == 1 : parallel = False
         self.checks(out, stacks, channels, parallel, cuda, test)
