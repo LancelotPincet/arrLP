@@ -4,7 +4,7 @@ version = "0.1.18"
 description = "A library that provides tools for arrays on CPU & GPU [any shape]."
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = [ "Bottleneck", "corelp", "joblib", "numba", "numpy", "scikit-image", "scipy",]
+dependencies = [ "Bottleneck", "corelp", "joblib", "numba", "numpy", "scipy",]
 
 [build-system]
 requires = [ "uv_build",]
@@ -16,8 +16,8 @@ docs = [ "sphinx", "sphinx-design", "sphinx-rtd-theme", "toml",]
 anaconda = [ "ipykernel", "spyder-kernels",]
 
 [project.optional-dependencies]
-cuda12 = [ "cupy-cuda12x", "cucim-cu12",]
-cuda13 = [ "cupy-cuda13x", "cucim-cu13",]
+cuda12 = [ "cupy-cuda12x"]
+cuda13 = [ "cupy-cuda13x"]
 
 [tool.uv]
 required-environments = [ "sys_platform == 'linux' and platform_machine == 'x86_64'", "sys_platform == 'win32' and (platform_machine == 'AMD64' or platform_machine == 'x86_64')",]
