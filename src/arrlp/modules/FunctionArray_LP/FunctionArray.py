@@ -19,14 +19,12 @@ import numpy as np
 import scipy
 from joblib import Parallel, delayed
 from numba import njit, prange
-import skimage
 
 # Check cupy
 try :
     import cupy as cp
     import cupyx.scipy as cupyx_scipy
     from cupyx.scipy import ndimage as cupyx_ndimage
-    import cucim.skimage as cucim_skimage
 except ImportError :
     cp = None
 
@@ -182,9 +180,6 @@ class FunctionArray() :
     @property
     def ndimage(self) :
         return cupyx_ndimage if self.cuda else scipy.ndimage
-    @property
-    def skimagex(self) :
-        return cucim_skimage if self.cuda else skimage
     def shape(self, array) : # function of array
         start = int(self.stacks)
         return array.shape[start:start + self.ndims]
