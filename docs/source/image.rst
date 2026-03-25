@@ -1,4 +1,4 @@
-template_lowername.image module
-template_equals=============
+arrlp.image module
+==================
 
-.. autofunction:: template_lowername.image
+.. autofunction:: arrlp.image

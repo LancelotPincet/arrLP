@@ -1,4 +1,4 @@
-template_lowername.kernel module
-template_equals==============
+arrlp.kernel module
+===================
 
-.. autofunction:: template_lowername.kernel
+.. autofunction:: arrlp.kernel

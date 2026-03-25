@@ -1,7 +1,7 @@
-template_lowername.FunctionArray module
-template_equals=====================
+arrlp.FunctionArray module
+==========================
 
-.. autoclass:: template_lowername.FunctionArray
+.. autoclass:: arrlp.FunctionArray
    :members: 
    :show-inheritance:
    :undoc-members:

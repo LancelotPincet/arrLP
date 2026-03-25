@@ -1,4 +1,4 @@
-template_lowername.coordinates module
-template_equals===================
+arrlp.coordinates module
+========================
 
-.. autofunction:: template_lowername.coordinates
+.. autofunction:: arrlp.coordinates

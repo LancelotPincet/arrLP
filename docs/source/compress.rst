@@ -1,4 +1,4 @@
-template_lowername.compress module
-template_equals================
+arrlp.compress module
+=====================
 
-.. autofunction:: template_lowername.compress
+.. autofunction:: arrlp.compress

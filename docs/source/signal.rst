@@ -1,4 +1,4 @@
-template_lowername.signal module
-template_equals==============
+arrlp.signal module
+===================
 
-.. autofunction:: template_lowername.signal
+.. autofunction:: arrlp.signal

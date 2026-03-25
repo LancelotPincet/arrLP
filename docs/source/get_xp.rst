@@ -1,4 +1,4 @@
-template_lowername.get_xp module
-template_equals==============
+arrlp.get_xp module
+===================
 
-.. autofunction:: template_lowername.get_xp
+.. autofunction:: arrlp.get_xp

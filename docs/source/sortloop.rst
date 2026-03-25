@@ -1,4 +1,4 @@
-template_lowername.sortloop module
-template_equals================
+arrlp.sortloop module
+=====================
 
-.. autofunction:: template_lowername.sortloop
+.. autofunction:: arrlp.sortloop

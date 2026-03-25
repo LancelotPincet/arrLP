@@ -1,4 +1,4 @@
-template_lowername.gc module
-template_equals==========
+arrlp.gc module
+===============
 
-.. autofunction:: template_lowername.gc
+.. autofunction:: arrlp.gc

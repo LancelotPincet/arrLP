@@ -1,4 +1,4 @@
-template_lowername.nb_threads module
-template_equals==================
+arrlp.nb_threads module
+=======================
 
-.. autofunction:: template_lowername.nb_threads
+.. autofunction:: arrlp.nb_threads

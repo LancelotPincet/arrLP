@@ -1,4 +1,4 @@
-template_lowername.debug_array module
-template_equals===================
+arrlp.debug_array module
+========================
 
-.. autofunction:: template_lowername.debug_array
+.. autofunction:: arrlp.debug_array

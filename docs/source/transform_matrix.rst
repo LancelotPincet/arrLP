@@ -1,4 +1,4 @@
-template_lowername.transform_matrix module
-template_equals========================
+arrlp.transform_matrix module
+=============================
 
-.. autofunction:: template_lowername.transform_matrix
+.. autofunction:: arrlp.transform_matrix

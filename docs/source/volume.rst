@@ -1,4 +1,4 @@
-template_lowername.volume module
-template_equals==============
+arrlp.volume module
+===================
 
-.. autofunction:: template_lowername.volume
+.. autofunction:: arrlp.volume
