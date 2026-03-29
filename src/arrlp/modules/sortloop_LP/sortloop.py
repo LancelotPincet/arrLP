@@ -14,6 +14,7 @@ This generator allows to loop on unique values of an array rapidly by first sort
 
 # %% Libraries
 from arrlp import get_xp
+import numpy as np
 
 
 
@@ -37,8 +38,8 @@ def sortloop(array, *arrays, axis=None, cuda=False, **kwargs) :
     -------
     positions : array
         Positions corresponding to the current masked elements.
-    array : array
-        first array which was used for defining the masked region
+    value : float or int
+        first array value which was used for defining the masked region
     *arrays :
         other array elements in the masked region
 
@@ -71,15 +72,16 @@ def sortloop(array, *arrays, axis=None, cuda=False, **kwargs) :
     sorted_arrays = [a[argsort] for a in flat_arrays]
 
     # unique values and counts
-    unique, counts = xp.unique(sorted_array, return_counts=True, axis=ax)
-    cumsum = xp.hstack((0, xp.cumsum(counts)))
+    to_unique = sorted_array if isinstance(sorted_array, np.ndarray) else xp.asnumpy(sorted_array)
+    unique, counts = np.unique(to_unique, return_counts=True, axis=ax)
+    cumsum = np.hstack((0, np.cumsum(counts)))
 
     # generate chunks
     for i, val in enumerate(unique):
         slc = slice(cumsum[i], cumsum[i+1])
         positions = argsort[slc]
         chunk_arrays = [a[slc] for a in sorted_arrays]
-        yield positions, val, *chunk_arrays
+        yield positions, val.item(), *chunk_arrays
 
 
 
