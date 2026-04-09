@@ -84,6 +84,7 @@ def debug_array(func, modes, stacks_list=None, channels_list=None, narrays=1, **
             print('\rRun...        ', end='')
             tic = perf_counter()
             out = func(*arrays, stacks=stacks, channels=channels, parallel=parallel, cuda=cuda, test=True, **kwargs, **kw)
+            if cuda : cp.cuda.Stream.null.synchronize()
             toc = perf_counter()
             print(f'\r{key} took {(toc-tic)*1000:.3f}ms      ')
             if cuda : out = xp.asnumpy(out)

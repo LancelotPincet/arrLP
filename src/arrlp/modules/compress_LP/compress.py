@@ -14,12 +14,13 @@ Compresses an array between values by normalizing, with possibility to saturate 
 
 # %% Libraries
 import numpy as np
+from numba import njit
 from arrlp import get_xp
 
 
 
 # %% Function
-def compress(array, /, max=1, min=0, *, dtype=None, white=None, black=None, white_percent=None, black_percent=None, saturate=None) :
+def compress(array, /, max=1, min=0, *, dtype=None, out=None, stacks=False, channels=False, white=None, black=None, white_percent=None, black_percent=None, saturate=None) :
     '''
     Compresses an array between values by normalizing, with possibility to saturate extrema.
     
@@ -33,6 +34,12 @@ def compress(array, /, max=1, min=0, *, dtype=None, white=None, black=None, whit
         black value in output. None for no changing of black
     dtype : np.dtype or str or None
         dtype of output, None for same as input
+    out : array
+        Array where to save, if None will create new array.
+    stacks : bool
+        True to apply on stacks.
+    channels : bool
+        True to apply on channels.
     white : int or float or None
         white value in input. None for maximum
     black : int or float or None
@@ -64,8 +71,21 @@ def compress(array, /, max=1, min=0, *, dtype=None, white=None, black=None, whit
     # init
     xp = get_xp(array)
     array = xp.asarray(array)
-    if dtype is None :
-        dtype = array.dtype
+    if out is None :
+        out = xp.empty_like(array, dtype=dtype)
+    if dtype is not None and out.dtype != dtype :
+        raise TypeError('Out dtype and asked dtype do not correspond')
+    out[:] = array
+
+    # Stacks and channels
+    if stacks :
+        for i in range(len(out)) :
+            compress(out[i], out=out[i], channels=channels, max=max, min=min, white=white, black=black, white_percent=white_percent, black_percent=black_percent, saturate=saturate)
+        return out
+    elif channels :
+        for i in range(out.shape[-1]) :
+            compress(out[..., i], out=out[..., i], max=max, min=min, white=white, black=black, white_percent=white_percent, black_percent=black_percent, saturate=saturate)
+        return out
 
     # Get white/black
     if white is None :
@@ -79,13 +99,11 @@ def compress(array, /, max=1, min=0, *, dtype=None, white=None, black=None, whit
     if max is not None and min is not None and min >= max :
         raise ValueError('min >= max is not possible while compressing')
     if max is not None :
-        array = normalization(array, value=max, norm=white, fix=black, xp=xp)
+        normalization(out, value=max, norm=white, fix=black, xp=xp)
         white = max
     if min is not None :
-        array = normalization(array, value=min, norm=black, fix=white, xp=xp)
+        normalization(out, value=min, norm=black, fix=white, xp=xp)
         black = min
-    if max is None and min is None :
-        array = xp.copy(array)
 
     # Saturation
     if saturate is not None :
@@ -93,10 +111,10 @@ def compress(array, /, max=1, min=0, *, dtype=None, white=None, black=None, whit
             sat_min, sat_max = black, white
         else :
             sat_min, sat_max = saturate, saturate
-        array[array>white] = sat_max
-        array[array<black] = sat_min
+        out[out>white] = sat_max
+        out[out<black] = sat_min
     
-    return array.astype(dtype)
+    return out
 
 
 
@@ -106,7 +124,14 @@ def normalization(array, /, value:float=None, norm:float=None, fix:float=None, x
     if fix is None : fix = 0
     if norm is None : norm = max(xp.nanmax(array),-xp.nanmin(array))
     if value is None : value = 1*xp.sign(norm)
-    return (array-fix)/(norm-fix)*(value-fix) + fix
+    njit_normalize(array.ravel(), value, norm, fix)
+
+
+
+@njit(nogil=True, cache=True, fastmath=True)
+def njit_normalize(array, value, norm, fix) :
+    for i in range(len(array)) :
+        array[i] = (array[i]-fix)/(norm-fix)*(value-fix) + fix
 
 
 

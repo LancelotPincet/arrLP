@@ -13,7 +13,7 @@ from arrlp import FunctionArray
 # %% Function
 
 # Initializations
-def _img_crosscorr(self, out, array, array2) :
+def _img_crosscorr(self, out, array, array2, *, phase=False) :
     array  = array.copy()
     array2 = array2.copy()
     
@@ -26,11 +26,15 @@ def _img_crosscorr(self, out, array, array2) :
     array2 = self.scipyx.fft.rfft2(array2, axes=self.axes) # release previous array2
     self.xp.conj(array2, out=array2)
     array *= array2
+    if phase:
+        self.xp.abs(array, out=array2)
+        self.xp.maximum(array2, 1e-12, out=array2)  # avoid division by zero
+        array /= array2
     del(array2) # release previous array 2
     array = self.scipyx.fft.irfft2(array, axes=self.axes) # release previous array    
     return self.scipyx.fft.fftshift(array, axes=self.axes)
 
-def par_img_crosscorr(self, out, array, array2) :
+def par_img_crosscorr(self, out, array, array2, *, phase=False) :
     array  = array.copy()
     array2 = array2.copy()
     
@@ -43,6 +47,10 @@ def par_img_crosscorr(self, out, array, array2) :
     array2 = self.scipyx.fft.rfft2(array2, axes=self.axes, workers=self.parallel) # release previous array2
     self.xp.conj(array2, out=array2)
     array *= array2
+    if phase:
+        self.xp.abs(array, out=array2)
+        self.xp.maximum(array2, 1e-12, out=array2)  # avoid division by zero
+        array /= array2
     del(array2) # release previous array 2
     array = self.scipyx.fft.irfft2(array, axes=self.axes, workers=self.parallel) # release previous array    
     return self.scipyx.fft.fftshift(array, axes=self.axes)
