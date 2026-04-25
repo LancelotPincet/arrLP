@@ -18,7 +18,7 @@ import numpy as np
 
 
 # %% Function
-def transform_matrix(shape=None, *, shiftx=0., shifty=0., shearx=0., sheary=0., angle=0., scalex=1., scaley=1.) :
+def transform_matrix(shape=None, *, shiftx=0., shifty=0., shearx=0., sheary=0., angle=0., scalex=1., scaley=1., stacks=False) :
     '''
     Defines the 3x3 transformation matrix for affine transformation in 2D.
     
@@ -58,7 +58,7 @@ def transform_matrix(shape=None, *, shiftx=0., shifty=0., shearx=0., sheary=0., 
     elif isinstance(shape, tuple) :
         pass
     else :
-        shape = shape.shape
+        shape = shape.shape[:2] if not stacks else shape.shape[1:3]
 
     h, w = shape
     h, w = h/2, w/2

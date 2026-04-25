@@ -26,6 +26,7 @@ sources = {
 'signal': 'arrlp.modules.signal_LP.signal',
 'sortloop': 'arrlp.modules.sortloop_LP.sortloop',
 'transform_matrix': 'arrlp.modules.transform_matrix_LP.transform_matrix',
+'transform_parameters': 'arrlp.modules.transform_parameters_LP.transform_parameters',
 'volume': 'arrlp.modules.volume_LP.volume',
 'img_greyopening': 'arrlp.modules.image_LP._functions.img_greyopening',
 'img_radialproj': 'arrlp.modules.image_LP._functions.img_radialproj',
