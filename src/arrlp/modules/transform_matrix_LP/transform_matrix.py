@@ -53,7 +53,7 @@ def transform_matrix(shape=None, *, shiftx=0., shifty=0., shearx=0., sheary=0., 
     # Manage shape argument
     if shape is None :
         shape = (0, 0)
-    elif isinstance(shape, int) :
+    elif isinstance(shape, int) or isinstance(shape, float):
         shape = (shape,) * 2
     elif isinstance(shape, tuple) :
         pass

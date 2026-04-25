@@ -45,7 +45,7 @@ arr_function = FunctionArray(
     cpu_loop = False,
     par_loop = False,
     gpu_loop = False, # True usually make bad GPU performance, check first if there is no ndimension support, and also try investigating reshaping
-    use_joblib = True, # If True, arguments of parallel function should not have "out".
+    use_joblib = True,
 
     # Performances
     remove_parallel = False,

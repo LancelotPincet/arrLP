@@ -195,13 +195,13 @@ class FunctionArray() :
         if parallel and cuda :
             raise ValueError('Cuda and Parallel cannot be True at the same time')
         
-        # Cuda not available
-        if cuda and cp is None :
-            raise ValueError('Cuda was asked but is not available in this environment')
-
         # No parallel
         if parallel and self.remove_parallel and not test :
             raise ValueError('Parallel optimization is not effective in this function')
+
+        # Cuda not available
+        if cuda and cp is None :
+            raise ValueError('Cuda was asked but is not available in this environment')
 
         # No cuda
         if cuda and self.remove_cuda and not test :
@@ -242,7 +242,7 @@ class FunctionArray() :
                 return _out if out is None else out
             case (True, True) :
                 for i in iterator(nstacks) :
-                    stack_out, stack_array, stack_args = None if out is None else out[i], array[i], (arg[i] for arg in args)
+                    stack_out, stack_array, stack_args = None if out is None else out[i], array[i], [arg[i] for arg in args]
                     if out is None and i > 0 : _stack_out = _out[i]
                     for j in range(nchannels) :
                         channel_out = None if stack_out is None else stack_out[..., j]
@@ -258,49 +258,98 @@ class FunctionArray() :
 
 
 
-    def parallel_loop(self, func, out, array, *args, **kwargs) :
+    def parallel_loop(self, func, out, array, *args, **kwargs):
 
         nstacks, nchannels = array.shape[0], array.shape[-1]
-        match (self.stacks, self.channels) :
 
-            case (False, False) :
-                raise SyntaxError('This parallel scenario with no stack nor channel should not exist. [should be corrected in checks]')
-            case (True, False) :
-                copy = Parallel(n_jobs=self.parallel, backend="loky")(delayed(func)(self, array[i], *(arg[i] for arg in args), **kwargs) for i in range(nstacks))
-                if out is None : out = np.empty_like(copy[0], shape=(len(copy), *copy[0].shape))
-                return copystacks(list(copy), out)
-            case (False, True) :
-                copy = Parallel(n_jobs=self.parallel, backend="loky")(delayed(func)(self, array[..., i], *(arg[..., i] for arg in args), **kwargs) for i in range(nchannels))
-                if out is None : out = np.empty_like(copy[0], shape=(*copy[0].shape, len(copy)))
-                return copychannels(list(copy), out)
-            case (True, True) :
-                newfunc = lambda self, array, *args, **kwargs : [func(self, array[..., j], *(arg[..., j] for arg in args), **kwargs) for j in range(nchannels)]
-                copy = Parallel(n_jobs=self.parallel, backend="loky")(delayed(newfunc)(self, array[i], *(arg[i] for arg in args), **kwargs) for i in range(nstacks))
-                if out is None : out = np.empty_like(copy[0][0], shape=(len(copy), *copy[0][0].shape, len(copy[0])))
-                return copystacksnchannels(list(copy), out)
-            
-            case _ : raise SyntaxError(f'Cannot use (stacks, channels)={(self.stacks, self.channels)}')
+        match (self.stacks, self.channels):
 
+            case (False, False):
+                raise SyntaxError(
+                    "This parallel scenario with no stack nor channel should not exist. "
+                    "[should be corrected in checks]"
+                )
 
+            case (True, False):
 
-@njit(parallel=True)
-def copystacks(copyfrom, copyto):
-    for i in prange(len(copyfrom)):
-        copyto[i] = copyfrom[i]
-    return copyto
+                if out is None:
+                    first = func(self, None, array[0], *(arg[0] for arg in args), **kwargs)
+                    out = np.empty_like(first, shape=(nstacks, *first.shape))
+                    out[0] = first
+                    start = 1
+                else:
+                    start = 0
 
-@njit(parallel=True)
-def copychannels(copyfrom, copyto):
-    for j in prange(len(copyfrom)):
-        copyto[..., j] = copyfrom[j]
-    return copyto
+                Parallel(n_jobs=self.parallel, prefer="threads", require="sharedmem")(
+                    delayed(func)(
+                        self,
+                        out[i],
+                        array[i],
+                        *(arg[i] for arg in args),
+                        **kwargs,
+                    )
+                    for i in range(start, nstacks)
+                )
 
-def copystacksnchannels(copyfrom, copyto):
-    for i in prange(len(copyfrom)):
-        stack_copyfrom, stack_copyto = copyfrom[i], copyto[i]
-        for j in range(len(stack_copyfrom)) :
-            stack_copyto[..., j] = stack_copyfrom[j]
-    return copyto
+                return out
+
+            case (False, True):
+
+                if out is None:
+                    first = func(self, None, array[..., 0], *(arg[..., 0] for arg in args), **kwargs)
+                    out = np.empty_like(first, shape=(*first.shape, nchannels))
+                    out[..., 0] = first
+                    start = 1
+                else:
+                    start = 0
+
+                Parallel(n_jobs=self.parallel, prefer="threads", require="sharedmem")(
+                    delayed(func)(
+                        self,
+                        out[..., j],
+                        array[..., j],
+                        *(arg[..., j] for arg in args),
+                        **kwargs,
+                    )
+                    for j in range(start, nchannels)
+                )
+
+                return out
+
+            case (True, True):
+
+                if out is None:
+                    first = func(
+                        self,
+                        None,
+                        array[0, ..., 0],
+                        *(arg[0, ..., 0] for arg in args),
+                        **kwargs,
+                    )
+                    out = np.empty_like(first, shape=(nstacks, *first.shape, nchannels))
+                    out[0, ..., 0] = first
+                    start = 1
+                else:
+                    start = 0
+
+                Parallel(n_jobs=self.parallel, prefer="threads", require="sharedmem")(
+                    delayed(func)(
+                        self,
+                        out[i, ..., j],
+                        array[i, ..., j],
+                        *(arg[i, ..., j] for arg in args),
+                        **kwargs,
+                    )
+                    for k in range(start, nstacks * nchannels)
+                    for i, j in [(k // nchannels, k % nchannels)]
+                )
+
+                return out
+
+            case _:
+                raise SyntaxError(
+                    f"Cannot use (stacks, channels)={(self.stacks, self.channels)}"
+                )
 
 
 

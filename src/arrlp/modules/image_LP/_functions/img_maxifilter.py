@@ -24,8 +24,8 @@ def out_img_maxifilter(self, array, **kwargs) :
 def _img_maxifilter(self, out, array, *, footprint, mode='nearest', **kwargs) :
     return self.ndimage.maximum_filter(array, footprint=footprint, axes=self.axes, output=out, mode=mode, **kwargs)
 
-def par_img_maxifilter(self, array, *, footprint, mode='nearest', **kwargs) :
-    return self.ndimage.maximum_filter(array, footprint=footprint, mode=mode, **kwargs)
+def par_img_maxifilter(self, out, array, *, footprint, mode='nearest', **kwargs) :
+    return self.ndimage.maximum_filter(array, footprint=footprint, output=out, mode=mode, **kwargs)
 
 
 
@@ -42,7 +42,7 @@ img_maxifilter = FunctionArray(
 
     # Loops
     par_loop = True,
-    use_joblib = True, # If True, arguments of parallel function should not have "out".
+    use_joblib = True,
 
     # Performances
     remove_parallel = False,

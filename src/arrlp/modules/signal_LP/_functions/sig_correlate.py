@@ -24,8 +24,8 @@ def out_sig_correlate(self, array, **kwargs) :
 def _sig_correlate(self, out, array, *, kernel, mode='nearest', **kwargs) :
     return self.ndimage.correlate1d(array, weights=kernel, axis=self.axes[0], output=out, mode=mode, **kwargs)
 
-def par_sig_correlate(self, array, *, kernel, mode='nearest', **kwargs) :
-    return self.ndimage.correlate1d(array, weights=kernel, mode=mode, **kwargs)
+def par_sig_correlate(self, out, array, *, kernel, mode='nearest', **kwargs) :
+    return self.ndimage.correlate1d(array, weights=kernel, output=out, mode=mode, **kwargs)
 
 
 
@@ -42,7 +42,7 @@ sig_correlate = FunctionArray(
 
     # Loops
     par_loop = True,
-    use_joblib = True, # If True, arguments of parallel function should not have "out".
+    use_joblib = True,
 
     # Performances
     remove_parallel = True,

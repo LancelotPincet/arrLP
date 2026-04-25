@@ -24,8 +24,8 @@ def out_img_correlate1d(self, array, **kwargs) :
 def cpu_img_correlate1d(self, out, array, *, kernel, mode='nearest', **kwargs) :
     return self.ndimage.correlate1d(self.ndimage.correlate1d(array, weights=kernel[0], output=out, axis=self.axes[0], mode=mode), weights=kernel[1], output=out, axis=self.axes[1], mode=mode, **kwargs)
 
-def par_img_correlate1d(self, array, *, kernel, mode='nearest', **kwargs) :
-    return self.ndimage.correlate1d(self.ndimage.correlate1d(array, weights=kernel[0], axis=0, mode=mode), weights=kernel[1], axis=1, mode=mode, **kwargs)
+def par_img_correlate1d(self, out, array, *, kernel, mode='nearest', **kwargs) :
+    return self.ndimage.correlate1d(self.ndimage.correlate1d(array, weights=kernel[0], output=out, axis=0, mode=mode), weights=kernel[1], output=out, axis=1, mode=mode, **kwargs)
 
 def gpu_img_correlate1d(self, out, array, *, kernel, mode='nearest', **kwargs) :
     return self.ndimage.correlate1d(self.ndimage.correlate1d(array, weights=kernel[0], axis=self.axes[0], mode=mode), weights=kernel[1], axis=self.axes[1], mode=mode, output=out, **kwargs) # First call must be allocated into a temporary buffer (output=None)
@@ -45,7 +45,7 @@ img_correlate1d = FunctionArray(
 
     # Loops
     par_loop = True,
-    use_joblib = True, # If True, arguments of parallel function should not have "out".
+    use_joblib = True,
 
     # Performances
     remove_parallel = False,

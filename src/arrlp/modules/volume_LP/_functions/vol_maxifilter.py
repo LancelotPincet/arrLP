@@ -24,8 +24,8 @@ def out_vol_maxifilter(self, array, **kwargs) :
 def _vol_maxifilter(self, out, array, *, footprint, mode='nearest', **kwargs) :
     return self.ndimage.maximum_filter(array, footprint=footprint, axes=self.axes, output=out, mode=mode, **kwargs)
 
-def par_vol_maxifilter(self, array, *, footprint, mode='nearest', **kwargs) :
-    return self.ndimage.maximum_filter(array, footprint=footprint, mode=mode, **kwargs)
+def par_vol_maxifilter(self, out, array, *, footprint, mode='nearest', **kwargs) :
+    return self.ndimage.maximum_filter(array, footprint=footprint, output=out, mode=mode, **kwargs)
 
 
 
@@ -42,7 +42,7 @@ vol_maxifilter = FunctionArray(
 
     # Loops
     par_loop = True,
-    use_joblib = True, # If True, arguments of parallel function should not have "out".
+    use_joblib = True,
 
     # Performances
     remove_parallel = False,

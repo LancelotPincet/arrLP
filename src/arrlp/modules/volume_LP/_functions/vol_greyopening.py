@@ -25,8 +25,8 @@ def out_vol_greyopening(self, array, **kwargs) :
 def _vol_greyopening(self, out, array, *, structure, footprint, mode='nearest', **kwargs) :
     return self.ndimage.grey_opening(array, structure=structure, footprint=footprint, axes=self.axes, output=out, mode=mode, **kwargs)
 
-def par_vol_greyopening(self, array, *, structure, footprint, mode='nearest', **kwargs) :
-    return self.ndimage.grey_opening(array, structure=structure, footprint=footprint, mode=mode, **kwargs)
+def par_vol_greyopening(self, out, array, *, structure, footprint, mode='nearest', **kwargs) :
+    return self.ndimage.grey_opening(array, structure=structure, footprint=footprint, output=out, mode=mode, **kwargs)
 
 
 
@@ -43,7 +43,7 @@ vol_greyopening = FunctionArray(
 
     # Loops
     par_loop = True,
-    use_joblib = True, # If True, arguments of parallel function should not have "out".
+    use_joblib = True,
 
     # Performances
     remove_parallel = False,

@@ -24,9 +24,6 @@ def out_img_transform(self, array, **kwargs) :
 def _img_transform(self, out, array, *, matrix, **kwargs) :
     return self.ndimage.affine_transform(array, matrix[:2, :2], offset=matrix[:2, 2], output=out, **kwargs)
 
-def par_img_transform(self, array, *, matrix, **kwargs) :
-    return self.ndimage.affine_transform(array, matrix[:2, :2], offset=matrix[:2, 2], **kwargs)
-
 
 
 # Main function
@@ -35,7 +32,7 @@ img_transform = FunctionArray(
     # Mandatory
     ndims = 2,
     cpu_function = _img_transform,
-    par_function = par_img_transform,
+    par_function = _img_transform,
     gpu_function = _img_transform,
     out_function = out_img_transform,
     ini_function = ini_img_transform,
@@ -44,7 +41,7 @@ img_transform = FunctionArray(
     cpu_loop = True,
     par_loop = True,
     gpu_loop = True, # True usually make bad GPU performance, check first if there is no ndimension support, and also try investigating reshaping
-    use_joblib = True, # If True, arguments of parallel function should not have "out".
+    use_joblib = True,
 
     # Performances
     remove_parallel = False,

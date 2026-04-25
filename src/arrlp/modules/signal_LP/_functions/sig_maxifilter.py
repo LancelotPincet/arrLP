@@ -19,8 +19,8 @@ def out_sig_maxifilter(self, array, **kwargs) :
 def _sig_maxifilter(self, out, array, *, size, mode='nearest', **kwargs) :
     return self.ndimage.maximum_filter1d(array, size=size, axis=self.axes[0], output=out, mode=mode, **kwargs)
 
-def par_sig_maxifilter(self, array, *, size, mode='nearest', **kwargs) :
-    return self.ndimage.maximum_filter1d(array, size=size, mode=mode, **kwargs)
+def par_sig_maxifilter(self, out, array, *, size, mode='nearest', **kwargs) :
+    return self.ndimage.maximum_filter1d(array, size=size, output=out, mode=mode, **kwargs)
 
 
 
@@ -37,7 +37,7 @@ sig_maxifilter = FunctionArray(
 
     # Loops
     par_loop = True,
-    use_joblib = True, # If True, arguments of parallel function should not have "out".
+    use_joblib = True,
 
     # Performances
     remove_parallel = False,

@@ -45,7 +45,7 @@ vol_autocorr = FunctionArray(
     ini_function = None,
 
     # Loops
-    use_joblib = False, # If True, arguments of parallel function should not have "out".
+    use_joblib = False,
 
     # Performances
     remove_parallel = False,

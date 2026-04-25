@@ -60,7 +60,7 @@ sig_wiener = FunctionArray(
     ini_function = ini_sig_wiener,
 
     # Loops
-    use_joblib = False, # If True, arguments of parallel function should not have "out".
+    use_joblib = False,
 
     # Performances
     remove_parallel = True,

@@ -72,7 +72,7 @@ vol_wiener = FunctionArray(
     ini_function = ini_vol_wiener,
 
     # Loops
-    use_joblib = False, # If True, arguments of parallel function should not have "out".
+    use_joblib = False,
 
     # Performances
     remove_parallel = False,
