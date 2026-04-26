@@ -17,12 +17,9 @@ Here are the references to the various modules to import in **arrLP**.
    debug_array
    gc
    get_xp
-   image
    kernel
    nb_threads
    relabel
-   signal
    sortloop
    transform_matrix
    transform_parameters
-   volume
