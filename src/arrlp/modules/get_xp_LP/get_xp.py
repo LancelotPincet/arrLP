@@ -46,8 +46,10 @@ def get_xp(input) :
 
     if cp is None :
         return np
-    if isinstance(input, bool) :
+    if isinstance(input, (bool, np.bool_)) :
         return cp if input else np
+    if isinstance(input, (int, np.integer)) and input in (0, 1) :
+        return cp if bool(input) else np
     return cp.get_array_module(input)
 
 
