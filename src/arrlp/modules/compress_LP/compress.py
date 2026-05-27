@@ -20,6 +20,16 @@ from arrlp import get_xp
 
 
 # %% Function
+def _nanpercentile(array, percentile, xp):
+    """Compute nan-aware percentile with a fallback backend path."""
+    if hasattr(xp, "nanpercentile"):
+        return xp.nanpercentile(array, percentile)
+    finite_values = array[xp.isfinite(array)]
+    if finite_values.size == 0:
+        return xp.nan
+    return xp.percentile(finite_values, percentile)
+
+
 def compress(array, /, max=1, min=0, *, dtype=None, out=None, stacks=False, channels=False, white=None, black=None, white_percent=None, black_percent=None, saturate=None) :
     '''
     Compresses an array between values by normalizing, with possibility to saturate extrema.
@@ -89,11 +99,13 @@ def compress(array, /, max=1, min=0, *, dtype=None, out=None, stacks=False, chan
 
     # Get white/black
     if white is None :
-        white = xp.nanmax(array) if white_percent is None else xp.nanpercentile(array, 100-white_percent)
+        white = xp.nanmax(array) if white_percent is None else _nanpercentile(array, 100-white_percent, xp)
     if black is None :
-        black = xp.nanmin(array) if black_percent is None else xp.nanpercentile(array, black_percent)
+        black = xp.nanmin(array) if black_percent is None else _nanpercentile(array, black_percent, xp)
     if white <= black :
-        raise ValueError('white <= black is not possible while compressing')
+        fill_value = min if min is not None else black
+        out[...] = fill_value
+        return out
 
     # Normalization
     if max is not None and min is not None and min >= max :
@@ -124,7 +136,10 @@ def normalization(array, /, value:float=None, norm:float=None, fix:float=None, x
     if fix is None : fix = 0
     if norm is None : norm = max(xp.nanmax(array),-xp.nanmin(array))
     if value is None : value = 1*xp.sign(norm)
-    njit_normalize(array.ravel(), value, norm, fix)
+    if xp is np:
+        njit_normalize(array.ravel(), value, norm, fix)
+    else:
+        array[...] = (array - fix) / (norm - fix) * (value - fix) + fix
 
 
 
